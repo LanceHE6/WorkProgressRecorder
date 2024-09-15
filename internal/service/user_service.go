@@ -1,6 +1,7 @@
 package service
 
 import (
+	"WorkProgressRecord/internal/model"
 	"WorkProgressRecord/internal/service/impl"
 	"WorkProgressRecord/pkg"
 )
@@ -10,6 +11,7 @@ import (
 //	@Description: 用户服务接口
 type UserService interface {
 	Login(account, password string) *pkg.Response
+	Import(users []model.User) *pkg.Response
 }
 
 // NewUserService

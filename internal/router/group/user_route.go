@@ -2,6 +2,7 @@ package group
 
 import (
 	"WorkProgressRecord/internal/handler"
+	"WorkProgressRecord/internal/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,5 +16,8 @@ func UserRoute(group *gin.RouterGroup) {
 	userGroup := group.Group("/user")
 	userGroup.POST("/login", func(context *gin.Context) {
 		userHandler.Login(context)
+	})
+	userGroup.POST("/import", middleware.AuthMiddleware(), func(context *gin.Context) {
+		userHandler.ImportUser(context)
 	})
 }
