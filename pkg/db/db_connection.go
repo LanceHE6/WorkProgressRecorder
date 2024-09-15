@@ -1,8 +1,8 @@
 package db
 
 import (
-	"WorkProgressRecord/util"
-	"WorkProgressRecord/util/config"
+	"WorkProgressRecord/config"
+	"WorkProgressRecord/pkg"
 	"database/sql"
 	"fmt"
 	"github.com/jinzhu/gorm"
@@ -13,6 +13,9 @@ import (
 
 var db *gorm.DB
 
+// Init
+//
+//	@Description: 初始化数据库连接
 func Init() {
 	var err error
 
@@ -86,7 +89,7 @@ func Init() {
 	}
 
 	// 初始化雪花算法生成worker
-	worker, err := util.NewWorker(1)
+	worker, err := pkg.NewWorker(1)
 	if err != nil {
 		log.Println("Snow Flake NewWorker error: ", err)
 		return
@@ -111,6 +114,9 @@ func Init() {
 	//fmt.Println("Init data done.")
 }
 
+// CloseMyDb
+//
+//	@Description: 关闭数据库连接
 func CloseMyDb() {
 	if db != nil {
 		if err := db.Close(); err != nil {
@@ -119,6 +125,10 @@ func CloseMyDb() {
 	}
 }
 
+// GetMyDbConnection
+//
+//	@Description: 获取数据库连接
+//	@return *gorm.DB 数据库连接
 func GetMyDbConnection() *gorm.DB {
 	return db
 }
