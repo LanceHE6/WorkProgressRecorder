@@ -10,6 +10,8 @@ import (
 type UserRepository interface {
 	SelectByID(id int64) *model.User
 	SelectByAccountAndPsw(account, password string) *model.User
+	Insert(user model.User) error
+	UpdateSessionID(id int64, sessionID string) error
 }
 
 // NewUserRepository

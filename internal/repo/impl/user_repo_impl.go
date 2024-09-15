@@ -52,3 +52,21 @@ func (u UserRepositoryImpl) SelectByAccountAndPsw(account, password string) *mod
 	}
 	return &user
 }
+
+// Insert
+//
+//	@Description: 插入用户
+//	@receiver u UserRepositoryImpl
+//	@param user *model.User 用户数据
+//	@return error 错误信息
+func (u UserRepositoryImpl) Insert(user model.User) error {
+	// 密码加密
+	// 密码默认未账号后6位
+	user.Password = pkg.HashPsw(user.Account[len(user.Account)-6:])
+	user.Permission = 1
+	return u.modelDB().Create(&user).Error
+}
+
+func (u UserRepositoryImpl) UpdateSessionID(id int64, sessionID string) error {
+	return u.modelDB().Where("id = ?", id).Update("session_id", sessionID).Error
+}
