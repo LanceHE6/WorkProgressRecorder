@@ -57,3 +57,16 @@ func (p *PGGoalRepoImpl) Insert(pgGoal model.PostgraduateGoal) error {
 func (p *PGGoalRepoImpl) Update(pgGoal model.PostgraduateGoal) error {
 	return p.modelDB().Update(&pgGoal).Error
 }
+
+// SelectByUID
+//
+//	@Description: 根据用户id查询考研目标
+//	@receiver p *PGGoalRepoImpl
+//	@param uid 用户id
+//	@return model.PostgraduateGoal 考研目标
+//	@return error 错误
+func (p *PGGoalRepoImpl) SelectByUID(uid int64) (model.PostgraduateGoal, error) {
+	var pgGoal model.PostgraduateGoal
+	err := p.modelDB().Where("uid = ?", uid).First(&pgGoal).Error
+	return pgGoal, err
+}

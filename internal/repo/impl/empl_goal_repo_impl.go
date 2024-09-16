@@ -57,3 +57,16 @@ func (e *EmplGoalRepoImpl) Insert(emplGoal model.EmploymentGoal) error {
 func (e *EmplGoalRepoImpl) Update(emplGoal model.EmploymentGoal) error {
 	return e.modelDB().Update(&emplGoal).Error
 }
+
+// SelectByUID
+//
+//	@Description: 根据用户id查询就业目标
+//	@receiver e 就业目标仓库实现
+//	@param uid 用户id
+//	@return model.EmploymentGoal 就业目标
+//	@return error 错误
+func (e *EmplGoalRepoImpl) SelectByUID(uid int64) (model.EmploymentGoal, error) {
+	var emplGoal model.EmploymentGoal
+	err := e.modelDB().Where("uid = ?", uid).First(&emplGoal).Error
+	return emplGoal, err
+}

@@ -11,6 +11,7 @@ import (
 type PGGoalRepo interface {
 	Insert(pgGoal model.PostgraduateGoal) error
 	Update(pgGoal model.PostgraduateGoal) error
+	SelectByUID(uid int64) (model.PostgraduateGoal, error)
 }
 
 // NewPGGoalRepo

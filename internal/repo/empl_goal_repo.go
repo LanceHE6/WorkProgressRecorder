@@ -11,6 +11,7 @@ import (
 type EmplGoalRepo interface {
 	Insert(emplGoal model.EmploymentGoal) error
 	Update(emplGoal model.EmploymentGoal) error
+	SelectByUID(uid int64) (model.EmploymentGoal, error)
 }
 
 // NewEmplGoalRepo
