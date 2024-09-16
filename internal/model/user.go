@@ -9,5 +9,6 @@ type User struct {
 	Password   string `gorm:"column:password;type:varchar(255);not null" json:"-"`             // 密码
 	Name       string `gorm:"column:name;type:varchar(255);not null" json:"name"`              // 姓名
 	Permission int    `gorm:"column:permission;type:int;not null" json:"permission"`           // 权限
+	Direction  int    `gorm:"column:direction;type:int;" json:"direction"`                     // 方向1:考研 2:就业
 	SessionID  string `gorm:"column:session_id;type:varchar(255)" json:"-"`                    // session_id
 }
