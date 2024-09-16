@@ -74,11 +74,18 @@ func (h *UserHandler) ImportUser(context *gin.Context) {
 	context.JSON(http.StatusOK, userService.Import(users))
 }
 
+// updatePasswordRequest
+// @Description: 修改密码请求参数结构体
 type updatePasswordRequest struct {
 	OldPassword string `json:"old_password" form:"old_password" binding:"required"`
 	NewPassword string `json:"new_password" form:"new_password" binding:"required"`
 }
 
+// UpdatePassword
+//
+//	@Description: 修改密码
+//	@receiver *UserHandler
+//	@param context *gin.Context
 func (*UserHandler) UpdatePassword(context *gin.Context) {
 	var data updatePasswordRequest
 	if err := context.ShouldBind(&data); err != nil {
@@ -91,4 +98,18 @@ func (*UserHandler) UpdatePassword(context *gin.Context) {
 	}
 	userService := service.NewUserService()
 	context.JSON(http.StatusOK, userService.UpdatePassword(claims.ID, data.OldPassword, data.NewPassword))
+}
+
+// GetTargetInfo
+//
+//	@Description: 获取用户目标信息
+//	@receiver *UserHandler
+//	@param context *gin.Context
+func (*UserHandler) GetTargetInfo(context *gin.Context) {
+	userInfo, err := middleware.GetUserInfoByContext(context)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, pkg.ErrorResponse(-1, "无法获取用户id", err))
+	}
+	userService := service.NewUserService()
+	context.JSON(http.StatusOK, userService.GetUserTargetInfo(userInfo.ID))
 }

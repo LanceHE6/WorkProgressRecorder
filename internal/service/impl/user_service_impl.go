@@ -92,3 +92,42 @@ func (s UserServiceImpl) UpdatePassword(id int64, oldPsw, newPsw string) *pkg.Re
 		return pkg.SuccessResponse(nil)
 	}
 }
+
+// GetUserTargetInfo
+//
+//	@Description: 获取用户目标信息
+//	@receiver s UserServiceImpl
+//	@param id 用户id
+//	@return *pkg.Response 返回结果
+func (s UserServiceImpl) GetUserTargetInfo(id int64) *pkg.Response {
+	user := repo.NewUserRepository().SelectByID(id)
+	if user == nil {
+		return pkg.FailedResponse(-1, "用户不存在")
+	}
+	if user.Direction == 0 {
+		return pkg.SuccessResponse(nil)
+	}
+	// 考研为目标
+	if user.Direction == 1 {
+		pgGoal, err := repo.NewPGGoalRepo().SelectByUID(id)
+		if err != nil {
+			return pkg.ErrorResponse(-2, "查询考研目标失败", err)
+		}
+		return pkg.SuccessResponse(map[string]any{
+			"direction": user.Direction,
+			"goal":      pgGoal,
+		})
+	}
+	// 就业为目标
+	if user.Direction == 2 {
+		emplGoal, err := repo.NewEmplGoalRepo().SelectByUID(id)
+		if err != nil {
+			return pkg.ErrorResponse(-2, "查询就业目标失败", err)
+		}
+		return pkg.SuccessResponse(map[string]any{
+			"direction": user.Direction,
+			"goal":      emplGoal,
+		})
+	}
+	return pkg.SuccessResponse(nil)
+}

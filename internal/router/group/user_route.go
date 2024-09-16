@@ -23,4 +23,7 @@ func UserRoute(group *gin.RouterGroup) {
 	userGroup.PUT("/update/psw", middleware.AuthMiddleware(), func(context *gin.Context) {
 		userHandler.UpdatePassword(context)
 	})
+	userGroup.GET("/target", middleware.AuthMiddleware(), func(context *gin.Context) {
+		userHandler.GetTargetInfo(context)
+	})
 }

@@ -13,6 +13,7 @@ type UserService interface {
 	Login(account, password string) *pkg.Response
 	Import(users []model.User) *pkg.Response
 	UpdatePassword(id int64, oldPsw, newPsw string) *pkg.Response
+	GetUserTargetInfo(id int64) *pkg.Response
 }
 
 // NewUserService
