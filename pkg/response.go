@@ -30,12 +30,25 @@ func SuccessResponse(data interface{}) *Response {
 	return NewResponse(0, "success", data)
 }
 
-// ErrorResponse
+// FailedResponse
 //
 //	@Description: 创建一个失败的响应
 //	@param code 响应码
 //	@param msg 响应信息
 //	@return *Response 响应对象
-func ErrorResponse(code int, msg string) *Response {
+func FailedResponse(code int, msg string) *Response {
 	return NewResponse(code, msg, nil)
+}
+
+// ErrorResponse
+//
+//	@Description: 创建一个错误响应
+//	@param code 响应码
+//	@param msg 响应信息
+//	@param err 错误信息
+//	@return *Response 响应对象
+func ErrorResponse(code int, msg string, err error) *Response {
+	return NewResponse(code, msg, map[string]any{
+		"err": err.Error(),
+	})
 }

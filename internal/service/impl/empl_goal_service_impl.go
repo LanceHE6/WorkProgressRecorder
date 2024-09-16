@@ -13,7 +13,7 @@ func (e EmplGoalServiceImpl) Insert(emplGoal model.EmploymentGoal) *pkg.Response
 	emplGoalRepo := repo.NewEmplGoalRepo()
 	err := emplGoalRepo.Insert(emplGoal)
 	if err != nil {
-		return pkg.NewResponse(100, "添加失败", err.Error())
+		return pkg.ErrorResponse(1, "添加失败", err)
 	}
 	return pkg.SuccessResponse(nil)
 }

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"WorkProgressRecord/internal/middleware"
 	"WorkProgressRecord/internal/model"
 	"WorkProgressRecord/internal/service"
 	"WorkProgressRecord/pkg"
@@ -30,7 +31,7 @@ type loginRequest struct {
 func (h *UserHandler) Login(context *gin.Context) {
 	var data loginRequest
 	if err := context.ShouldBind(&data); err != nil {
-		context.JSON(http.StatusBadRequest, pkg.ErrorResponse(100, err.Error()))
+		context.JSON(http.StatusBadRequest, pkg.FailedResponse(100, err.Error()))
 		return
 	}
 	userService := service.NewUserService()
@@ -56,7 +57,7 @@ type importUsersRequest struct {
 func (h *UserHandler) ImportUser(context *gin.Context) {
 	var data importUsersRequest
 	if err := context.ShouldBind(&data); err != nil {
-		context.JSON(http.StatusBadRequest, pkg.ErrorResponse(100, err.Error()))
+		context.JSON(http.StatusBadRequest, pkg.FailedResponse(100, err.Error()))
 		return
 	}
 
@@ -71,4 +72,23 @@ func (h *UserHandler) ImportUser(context *gin.Context) {
 	}
 	userService := service.NewUserService()
 	context.JSON(http.StatusOK, userService.Import(users))
+}
+
+type updatePasswordRequest struct {
+	OldPassword string `json:"old_password" form:"old_password" binding:"required"`
+	NewPassword string `json:"new_password" form:"new_password" binding:"required"`
+}
+
+func (*UserHandler) UpdatePassword(context *gin.Context) {
+	var data updatePasswordRequest
+	if err := context.ShouldBind(&data); err != nil {
+		context.JSON(http.StatusBadRequest, pkg.FailedResponse(100, err.Error()))
+		return
+	}
+	claims, err := middleware.GetUserInfoByContext(context)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, pkg.FailedResponse(-1, err.Error()))
+	}
+	userService := service.NewUserService()
+	context.JSON(http.StatusOK, userService.UpdatePassword(claims.ID, data.OldPassword, data.NewPassword))
 }

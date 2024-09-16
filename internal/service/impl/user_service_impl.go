@@ -23,17 +23,17 @@ func (s UserServiceImpl) Login(account, password string) *pkg.Response {
 	userRepo := repo.NewUserRepository()
 	user := userRepo.SelectByAccountAndPsw(account, password)
 	if user == nil {
-		return pkg.SuccessResponse("账号或密码错误")
+		return pkg.FailedResponse(1, "账号或密码错误")
 	}
 	sessionID := pkg.GenerateUUID(8)
 	token, err := pkg.GenerateToken(user.ID, user.Permission, user.Name, sessionID)
 	if err != nil {
-		return pkg.ErrorResponse(-1, "生成token失败")
+		return pkg.ErrorResponse(-1, "生成token失败", err)
 	}
 	// 更新session_id
 	err = userRepo.UpdateSessionID(user.ID, sessionID)
 	if err != nil {
-		return pkg.ErrorResponse(-2, "更新session_id失败")
+		return pkg.ErrorResponse(-2, "更新session_id失败", err)
 	}
 	return pkg.SuccessResponse(map[string]any{
 		"token": token,
@@ -61,9 +61,33 @@ func (s UserServiceImpl) Import(users []model.User) *pkg.Response {
 		}
 	}
 	if len(errs) > 0 {
-		return pkg.NewResponse(100, "导入存在错误", map[string]any{
+		return pkg.NewResponse(1, "导入存在错误", map[string]any{
 			"errs": errs,
 		})
+	} else {
+		return pkg.SuccessResponse(nil)
+	}
+}
+
+// UpdatePassword
+//
+//	@Description: 修改密码
+//	@receiver s UserServiceImpl
+//	@param id 用户id
+//	@param oldPsw 原密码
+//	@param newPsw 新密码
+//	@return *pkg.Response 返回结果
+func (s UserServiceImpl) UpdatePassword(id int64, oldPsw, newPsw string) *pkg.Response {
+	user := repo.NewUserRepository().SelectByID(id)
+	if user == nil {
+		return pkg.FailedResponse(-1, "用户不存在")
+	}
+	if !pkg.CheckPsw(user.Password, oldPsw) {
+		return pkg.FailedResponse(-2, "原密码错误")
+	}
+	err := repo.NewUserRepository().UpdatePassword(id, newPsw)
+	if err != nil {
+		return pkg.ErrorResponse(-3, "修改密码失败", err)
 	} else {
 		return pkg.SuccessResponse(nil)
 	}

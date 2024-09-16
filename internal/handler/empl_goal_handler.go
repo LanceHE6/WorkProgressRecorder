@@ -23,7 +23,7 @@ type insertRequest struct {
 func (EmplGoalHandler) AddEmplGoal(context *gin.Context) {
 	var data insertRequest
 	if err := context.ShouldBind(&data); err != nil {
-		context.JSON(http.StatusBadRequest, pkg.ErrorResponse(100, err.Error()))
+		context.JSON(http.StatusBadRequest, pkg.FailedResponse(100, err.Error()))
 		return
 	}
 
