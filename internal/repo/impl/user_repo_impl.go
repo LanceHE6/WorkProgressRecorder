@@ -88,3 +88,14 @@ func (u UserRepositoryImpl) UpdateSessionID(id int64, sessionID string) error {
 func (u UserRepositoryImpl) UpdateDirection(id int64, direction int) error {
 	return u.modelDB().Where("id = ?", id).Update("direction", direction).Error
 }
+
+// UpdatePassword
+//
+//	@Description: 更新用户密码
+//	@receiver u UserRepositoryImpl
+//	@param id int64 用户id
+//	@param newPsw string 新密码
+//	@return error 错误信息
+func (u UserRepositoryImpl) UpdatePassword(id int64, newPsw string) error {
+	return u.modelDB().Where("id = ?", id).Update("password", pkg.HashPsw(newPsw)).Error
+}

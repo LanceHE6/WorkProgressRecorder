@@ -20,4 +20,7 @@ func UserRoute(group *gin.RouterGroup) {
 	userGroup.POST("/import", middleware.AuthMiddleware(), func(context *gin.Context) {
 		userHandler.ImportUser(context)
 	})
+	userGroup.PUT("/update/psw", middleware.AuthMiddleware(), func(context *gin.Context) {
+		userHandler.UpdatePassword(context)
+	})
 }

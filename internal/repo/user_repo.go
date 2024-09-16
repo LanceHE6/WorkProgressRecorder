@@ -13,6 +13,7 @@ type UserRepository interface {
 	Insert(user model.User) error
 	UpdateSessionID(id int64, sessionID string) error
 	UpdateDirection(id int64, direction int) error
+	UpdatePassword(id int64, newPsw string) error
 }
 
 // NewUserRepository
