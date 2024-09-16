@@ -12,7 +12,7 @@ import (
 type EmplGoalHandler struct {
 }
 
-type insertRequest struct {
+type addEmplGoalRequest struct {
 	Status        int    `json:"status" form:"status" binding:"required"`
 	TargetCompany string `json:"target_company" form:"target_company" binding:"required"`
 	TargetJob     string `json:"target_job" form:"target_job" binding:"required"`
@@ -26,7 +26,7 @@ type insertRequest struct {
 //	@receiver EmplGoalHandler
 //	@param context *gin.Context
 func (EmplGoalHandler) AddEmplGoal(context *gin.Context) {
-	var data insertRequest
+	var data addEmplGoalRequest
 	if err := context.ShouldBind(&data); err != nil {
 		context.JSON(http.StatusBadRequest, pkg.FailedResponse(100, err.Error()))
 		return
@@ -55,7 +55,7 @@ func (EmplGoalHandler) AddEmplGoal(context *gin.Context) {
 //	@receiver EmplGoalHandler
 //	@param context *gin.Context
 func (EmplGoalHandler) UpdateEmplGoal(context *gin.Context) {
-	var data insertRequest
+	var data addEmplGoalRequest
 	if err := context.ShouldBind(&data); err != nil {
 		context.JSON(http.StatusBadRequest, pkg.FailedResponse(100, err.Error()))
 		return
