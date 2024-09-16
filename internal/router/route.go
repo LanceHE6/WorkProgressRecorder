@@ -16,4 +16,5 @@ func Route(gin *gin.Engine) {
 	// 用户路由组
 
 	group.UserRoute(apiV1)
+	group.EmplGoalRoute(apiV1)
 }
