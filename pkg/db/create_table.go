@@ -11,4 +11,6 @@ import (
 //	@param db *gorm.DB 数据库连接
 func CreateTable(db *gorm.DB) {
 	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.PostgraduateGoal{})
+	db.AutoMigrate(&model.EmploymentGoal{})
 }
