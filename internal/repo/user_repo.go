@@ -12,6 +12,7 @@ type UserRepository interface {
 	SelectByAccountAndPsw(account, password string) *model.User
 	Insert(user model.User) error
 	UpdateSessionID(id int64, sessionID string) error
+	UpdateDirection(id int64, direction int) error
 }
 
 // NewUserRepository

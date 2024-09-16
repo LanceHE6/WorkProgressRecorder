@@ -67,6 +67,24 @@ func (u UserRepositoryImpl) Insert(user model.User) error {
 	return u.modelDB().Create(&user).Error
 }
 
+// UpdateSessionID
+//
+//	@Description: 更新用户sessionID
+//	@receiver u UserRepositoryImpl
+//	@param id int64 用户id
+//	@param sessionID string sessionID
+//	@return error 错误信息
 func (u UserRepositoryImpl) UpdateSessionID(id int64, sessionID string) error {
 	return u.modelDB().Where("id = ?", id).Update("session_id", sessionID).Error
+}
+
+// UpdateDirection
+//
+//	@Description: 更新用户方向
+//	@receiver u UserRepositoryImpl
+//	@param id int64 用户id
+//	@param direction int 方向
+//	@return error 错误信息
+func (u UserRepositoryImpl) UpdateDirection(id int64, direction int) error {
+	return u.modelDB().Where("id = ?", id).Update("direction", direction).Error
 }
