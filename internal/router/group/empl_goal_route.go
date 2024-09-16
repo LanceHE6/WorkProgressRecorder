@@ -18,4 +18,7 @@ func EmplGoalRoute(group *gin.RouterGroup) {
 	emplGoalGroup.POST("/add", func(context *gin.Context) {
 		emplGoalHandler.AddEmplGoal(context)
 	})
+	emplGoalGroup.PUT("/update", func(context *gin.Context) {
+		emplGoalHandler.UpdateEmplGoal(context)
+	})
 }
