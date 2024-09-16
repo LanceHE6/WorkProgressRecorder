@@ -3,7 +3,7 @@ package model
 type PostgraduateGoal struct {
 	Base
 	// 关联用户
-	User User  `gorm:"foreignKey:UID" json:"user"`
+	User User  `gorm:"foreignKey:UID" json:"-"`
 	UID  int64 `gorm:"unique" json:"uid"`
 
 	TargetUniversity string  `json:"target_university"` // 目标院校

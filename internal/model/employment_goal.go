@@ -3,7 +3,7 @@ package model
 type EmploymentGoal struct {
 	Base
 	// 关联用户
-	User *User `gorm:"foreignKey:UID"`
+	User *User `gorm:"foreignKey:UID" json:"-"`
 	UID  int64 `gorm:"unique" json:"uid"`
 
 	// 目标
