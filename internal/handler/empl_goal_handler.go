@@ -16,7 +16,7 @@ type addEmplGoalRequest struct {
 	Status        int    `json:"status" form:"status" binding:"required"`
 	TargetCompany string `json:"target_company" form:"target_company" binding:"required"`
 	TargetJob     string `json:"target_job" form:"target_job" binding:"required"`
-	TargetSalary  int    `json:"target_salary" form:"target_salary" binding:"required"`
+	TargetSalary  string `json:"target_salary" form:"target_salary" binding:"required"`
 	TargetArea    string `json:"target_area" form:"target_area" binding:"required"`
 }
 
