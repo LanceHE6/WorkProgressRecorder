@@ -16,9 +16,7 @@ func EmplGoalRoute(group *gin.RouterGroup) {
 	emplGoalGroup := group.Group("/emgl")
 	emplGoalGroup.Use(middleware.AuthMiddleware())
 	emplGoalGroup.POST("/add", func(context *gin.Context) {
-		emplGoalHandler.AddEmplGoal(context)
+		emplGoalHandler.AddAndUpdateEmplGoal(context)
 	})
-	emplGoalGroup.PUT("/update", func(context *gin.Context) {
-		emplGoalHandler.UpdateEmplGoal(context)
-	})
+
 }

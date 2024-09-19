@@ -16,9 +16,6 @@ func PGGoalRoute(group *gin.RouterGroup) {
 	pgGoalGroup := group.Group("/pggl")
 	pgGoalGroup.Use(middleware.AuthMiddleware())
 	pgGoalGroup.POST("/add", func(context *gin.Context) {
-		pgGoalHandler.AddPGGoal(context)
-	})
-	pgGoalGroup.PUT("/update", func(context *gin.Context) {
-		pgGoalHandler.UpdatePGGoal(context)
+		pgGoalHandler.AddAndUpdatePGGoal(context)
 	})
 }

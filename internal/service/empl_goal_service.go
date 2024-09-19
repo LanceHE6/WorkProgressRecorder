@@ -10,8 +10,7 @@ import (
 //
 //	@Description: 就业目标服务接口
 type EmplGoalService interface {
-	Insert(emplGoal model.EmploymentGoal) *pkg.Response
-	Update(emplGoal model.EmploymentGoal) *pkg.Response
+	InsertAndUpdate(emplGoal model.EmploymentGoal) *pkg.Response
 }
 
 // NewEmplGoalService

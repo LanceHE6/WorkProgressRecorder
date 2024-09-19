@@ -55,7 +55,24 @@ func (p *PGGoalRepoImpl) Insert(pgGoal model.PostgraduateGoal) error {
 //	@param pgGoal 考研目标
 //	@return error 错误
 func (p *PGGoalRepoImpl) Update(pgGoal model.PostgraduateGoal) error {
-	return p.modelDB().Update(&pgGoal).Error
+	tx := db.GetMyDbConnection().Begin()
+	err := tx.Model(&model.PostgraduateGoal{}).Updates(&pgGoal).Error
+	if err != nil {
+		return err
+	}
+	// 更新用户方向
+	err = tx.Model(&model.User{}).Where("id = ?", pgGoal.UID).Update("direction", 1).Error
+	if err != nil {
+		// 回滚事务
+		tx.Rollback()
+		return err
+	}
+	err = tx.Commit().Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	return nil
 }
 
 // SelectByUID

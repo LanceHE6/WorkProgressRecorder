@@ -55,7 +55,24 @@ func (e *EmplGoalRepoImpl) Insert(emplGoal model.EmploymentGoal) error {
 //	@param emplGoal 就业目标
 //	@return error 错误
 func (e *EmplGoalRepoImpl) Update(emplGoal model.EmploymentGoal) error {
-	return e.modelDB().Update(&emplGoal).Error
+	tx := db.GetMyDbConnection().Begin()
+	err := tx.Model(&model.EmploymentGoal{}).Update(&emplGoal).Error
+	if err != nil {
+		return err
+	}
+	// 更新用户方向
+	err = tx.Model(&model.User{}).Where("id = ?", emplGoal.UID).Update("direction", 2).Error
+	if err != nil {
+		// 回滚事务
+		tx.Rollback()
+		return err
+	}
+	err = tx.Commit().Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	return nil
 }
 
 // SelectByUID

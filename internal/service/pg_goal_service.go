@@ -10,8 +10,7 @@ import (
 //
 //	@Description: 考研目标服务接口
 type PGGoalService interface {
-	Insert(pgGoal model.PostgraduateGoal) *pkg.Response
-	Update(pgGoal model.PostgraduateGoal) *pkg.Response
+	InsertAndUpdate(pgGoal model.PostgraduateGoal) *pkg.Response
 }
 
 // NewPGGoalService
