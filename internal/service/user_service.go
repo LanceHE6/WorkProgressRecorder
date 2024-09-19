@@ -15,6 +15,7 @@ type UserService interface {
 	UpdatePassword(id int64, oldPsw, newPsw string) *pkg.Response
 	GetUserTargetInfo(id int64) *pkg.Response
 	GetUserInfo(id int64) *pkg.Response
+	SearchUsers(params pkg.SearchUsersParams) *pkg.Response
 }
 
 // NewUserService

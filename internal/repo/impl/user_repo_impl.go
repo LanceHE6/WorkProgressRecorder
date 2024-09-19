@@ -4,6 +4,7 @@ import (
 	"WorkProgressRecord/internal/model"
 	"WorkProgressRecord/pkg"
 	"WorkProgressRecord/pkg/db"
+	"fmt"
 	"github.com/jinzhu/gorm"
 )
 
@@ -98,4 +99,32 @@ func (u UserRepositoryImpl) UpdateDirection(id int64, direction int) error {
 //	@return error 错误信息
 func (u UserRepositoryImpl) UpdatePassword(id int64, newPsw string) error {
 	return u.modelDB().Where("id = ?", id).Update("password", pkg.HashPsw(newPsw)).Error
+}
+
+func (u UserRepositoryImpl) SearchUsers(params pkg.SearchUsersParams) []model.User {
+	query := db.GetMyDbConnection().Table("users")
+	fmt.Println(*params.Page)
+	if params.Account != nil {
+		query = query.Where("account like ?", "%"+*params.Account+"%")
+	}
+	if params.Name != nil {
+		query = query.Where("name like ?", "%"+*params.Name+"%")
+	}
+	if params.Direction != nil {
+		query = query.Where("direction = ?", *params.Direction)
+	}
+	// 分页
+	if params.Limit != nil {
+		query = query.Limit(*params.Limit)
+	} else {
+		params.Limit = new(int)
+		*params.Limit = 10
+	}
+	if params.Page != nil {
+		query = query.Offset(*params.Page - 1**params.Limit)
+	}
+	fmt.Println(query)
+	var users []model.User
+	query.Find(&users)
+	return users
 }

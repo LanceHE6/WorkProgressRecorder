@@ -7,6 +7,7 @@ import (
 	"WorkProgressRecord/pkg"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 // UserHandler
@@ -126,4 +127,31 @@ func (*UserHandler) GetUserInfo(context *gin.Context) {
 	}
 	userService := service.NewUserService()
 	context.JSON(http.StatusOK, userService.GetUserInfo(userInfo.ID))
+}
+
+// SearchUsers
+//
+//	@Description: 搜索用户
+//	@receiver *UserHandler
+//	@param context *gin.Context
+func (*UserHandler) SearchUsers(context *gin.Context) {
+	var params pkg.SearchUsersParams
+	page, _ := strconv.Atoi(context.DefaultQuery("page", "1"))
+	params.Page = &page
+	limit, _ := strconv.Atoi(context.DefaultQuery("page_size", "10"))
+	params.Limit = &limit
+	if context.Query("account") != "" {
+		account := context.Query("account")
+		params.Account = &account
+	}
+	if context.Query("name") != "" {
+		name := context.Query("name")
+		params.Name = &name
+	}
+	if context.Query("direction") != "" {
+		direction, _ := strconv.Atoi(context.Query("direction"))
+		params.Direction = &direction
+	}
+	userService := service.NewUserService()
+	context.JSON(http.StatusOK, userService.SearchUsers(params))
 }

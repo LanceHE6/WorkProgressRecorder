@@ -148,3 +148,41 @@ func (s UserServiceImpl) GetUserInfo(id int64) *pkg.Response {
 		})
 	}
 }
+
+// SearchUsers
+//
+//	@Description: 查询用户
+//	@receiver s UserServiceImpl
+//	@param params 查询参数
+//	@return *pkg.Response 返回结果
+func (s UserServiceImpl) SearchUsers(params pkg.SearchUsersParams) *pkg.Response {
+	users := repo.NewUserRepository().SearchUsers(params)
+	pgGoalRepo := repo.NewPGGoalRepo()
+	emplGoalRepo := repo.NewEmplGoalRepo()
+
+	// 构造返回消息
+	data := make([]map[string]any, 0)
+	for _, user := range users {
+		userInfo := make(map[string]any)
+		userInfo["user"] = user
+		if user.Direction == 1 {
+			pgGoal, err := pgGoalRepo.SelectByUID(user.ID)
+			if err != nil {
+				userInfo["goal"] = "error: " + err.Error()
+				continue
+			}
+			userInfo["goal"] = pgGoal
+		} else if user.Direction == 2 {
+			emplGoal, err := emplGoalRepo.SelectByUID(user.ID)
+			if err != nil {
+				userInfo["goal"] = "error: " + err.Error()
+				continue
+			}
+			userInfo["goal"] = emplGoal
+		} else {
+			userInfo["goal"] = nil
+		}
+		data = append(data, userInfo)
+	}
+	return pkg.SuccessResponse(data)
+}
