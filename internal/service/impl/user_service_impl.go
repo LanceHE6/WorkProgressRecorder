@@ -131,3 +131,20 @@ func (s UserServiceImpl) GetUserTargetInfo(id int64) *pkg.Response {
 	}
 	return pkg.SuccessResponse(nil)
 }
+
+// GetUserInfo
+//
+//	@Description: 获取用户信息
+//	@receiver s UserServiceImpl
+//	@param id 用户id
+//	@return *pkg.Response 返回结果
+func (s UserServiceImpl) GetUserInfo(id int64) *pkg.Response {
+	user := repo.NewUserRepository().SelectByID(id)
+	if user == nil {
+		return pkg.FailedResponse(-1, "用户不存在")
+	} else {
+		return pkg.SuccessResponse(map[string]any{
+			"user": user,
+		})
+	}
+}

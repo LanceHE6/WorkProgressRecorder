@@ -113,3 +113,17 @@ func (*UserHandler) GetTargetInfo(context *gin.Context) {
 	userService := service.NewUserService()
 	context.JSON(http.StatusOK, userService.GetUserTargetInfo(userInfo.ID))
 }
+
+// GetUserInfo
+//
+//	@Description: 获取用户信息
+//	@receiver *UserHandler
+//	@param context *gin.Context
+func (*UserHandler) GetUserInfo(context *gin.Context) {
+	userInfo, err := middleware.GetUserInfoByContext(context)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, pkg.ErrorResponse(-1, "无法获取用户id", err))
+	}
+	userService := service.NewUserService()
+	context.JSON(http.StatusOK, userService.GetUserInfo(userInfo.ID))
+}

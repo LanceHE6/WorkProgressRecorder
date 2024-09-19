@@ -26,4 +26,7 @@ func UserRoute(group *gin.RouterGroup) {
 	userGroup.GET("/target", middleware.AuthMiddleware(), func(context *gin.Context) {
 		userHandler.GetTargetInfo(context)
 	})
+	userGroup.GET("/info", middleware.AuthMiddleware(), func(context *gin.Context) {
+		userHandler.GetUserInfo(context)
+	})
 }
