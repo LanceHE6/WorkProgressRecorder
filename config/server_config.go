@@ -28,12 +28,9 @@ type Config struct {
 			DBNAME   string `yaml:"dbname"`
 		} `yaml:"mysql"`
 	} `yaml:"db"`
-	SMTP struct {
-		HOST     string `yaml:"host"`
-		PORT     int    `yaml:"port"`
-		USERNAME string `yaml:"user_name"`
-		PASSWORD string `yaml:"password"`
-	} `yaml:"smtp"`
+	PGEE struct {
+		PGEE_TIME string `yaml:"pgee_time"` // 考研时间
+	}
 }
 
 var ServerConfig Config
@@ -96,16 +93,10 @@ func init() {
 					DBNAME:   "wpr",
 				},
 			},
-			SMTP: struct {
-				HOST     string `yaml:"host"`
-				PORT     int    `yaml:"port"`
-				USERNAME string `yaml:"user_name"`
-				PASSWORD string `yaml:"password"`
+			PGEE: struct {
+				PGEE_TIME string `yaml:"pgee_time"` // 考研时间
 			}{
-				HOST:     "smtp.example.com",
-				PORT:     465,
-				USERNAME: "your_email@example.com",
-				PASSWORD: "your_password",
+				PGEE_TIME: "2024-12-21",
 			},
 		}
 
