@@ -18,4 +18,7 @@ func ClockInRoute(group *gin.RouterGroup) {
 	clockInGroup.POST("/add", func(context *gin.Context) {
 		clockInService.AddClockIn(context)
 	})
+	clockInGroup.GET("/is_clock_in", func(context *gin.Context) {
+		clockInService.IsUserClockIn(context)
+	})
 }

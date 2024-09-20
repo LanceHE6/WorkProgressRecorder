@@ -10,6 +10,7 @@ import (
 //	@Description: 打卡服务接口
 type ClockInService interface {
 	AddClockIn(context *gin.Context)
+	IsUserClockIn(context *gin.Context)
 }
 
 // NewClockInService

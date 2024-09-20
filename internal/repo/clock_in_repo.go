@@ -10,6 +10,7 @@ import (
 //	@Description: 打卡记录仓库接口
 type ClockInRepo interface {
 	Insert(clockInData model.ClockIn) error
+	SelectUserLatest(uid int64) (model.ClockIn, error)
 }
 
 // NewClockInRepo
