@@ -20,31 +20,6 @@ func InitData() {
 		Name:       "admin",
 		Permission: 2,
 	}, "admin", "account")
-	// 初始化就业状态数据
-	createIfNotExists(db, &model.WorkProgressStatus{
-		StatusName: "期望投递",
-	}, "期望投递", "status_name")
-	createIfNotExists(db, &model.WorkProgressStatus{
-		StatusName: "已听宣讲",
-	}, "已听宣讲", "status_name")
-	createIfNotExists(db, &model.WorkProgressStatus{
-		StatusName: "已经投递",
-	}, "已经投递", "status_name")
-	createIfNotExists(db, &model.WorkProgressStatus{
-		StatusName: "等待面试",
-	}, "等待面试", "status_name")
-	createIfNotExists(db, &model.WorkProgressStatus{
-		StatusName: "已经面试",
-	}, "已经面试", "status_name")
-	createIfNotExists(db, &model.WorkProgressStatus{
-		StatusName: "正在面试(多轮面试)",
-	}, "正在面试(多轮面试)", "status_name")
-	createIfNotExists(db, &model.WorkProgressStatus{
-		StatusName: "失败",
-	}, "失败", "status_name")
-	createIfNotExists(db, &model.WorkProgressStatus{
-		StatusName: "拿到offer",
-	}, "拿到offer", "status_name")
 }
 
 // createIfNotExists
