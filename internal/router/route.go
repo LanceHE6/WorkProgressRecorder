@@ -20,4 +20,5 @@ func Route(gin *gin.Engine) {
 	group.PGGoalRoute(apiV1)
 	group.ClockInRoute(apiV1)
 	group.PgCountDownRoute(apiV1)
+	group.WpStatusRoute(apiV1)
 }
