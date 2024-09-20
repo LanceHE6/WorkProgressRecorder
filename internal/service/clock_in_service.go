@@ -1,16 +1,15 @@
 package service
 
 import (
-	"WorkProgressRecord/internal/model"
 	"WorkProgressRecord/internal/service/impl"
-	"WorkProgressRecord/pkg"
+	"github.com/gin-gonic/gin"
 )
 
 // ClockInService
 //
 //	@Description: 打卡服务接口
 type ClockInService interface {
-	AddClockIn(clockInData model.ClockIn) *pkg.Response
+	AddClockIn(context *gin.Context)
 }
 
 // NewClockInService

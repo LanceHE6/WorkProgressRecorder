@@ -1,8 +1,8 @@
 package group
 
 import (
-	"WorkProgressRecord/internal/handler"
 	"WorkProgressRecord/internal/middleware"
+	"WorkProgressRecord/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,11 +11,11 @@ import (
 //	@Description: 打卡路由
 //	@param group gin.RouterGroup
 func ClockInRoute(group *gin.RouterGroup) {
-	clockInHandler := handler.ClockInHandler{}
+	clockInService := service.NewClockInService()
 
 	clockInGroup := group.Group("/clock_in")
 	clockInGroup.Use(middleware.AuthMiddleware())
 	clockInGroup.POST("/add", func(context *gin.Context) {
-		clockInHandler.AddClockIn(context)
+		clockInService.AddClockIn(context)
 	})
 }
