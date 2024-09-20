@@ -107,11 +107,10 @@ func Init() {
 	// 自动建表
 	CreateTable(db)
 
-	//
-	//// 初始化数据
-	//fmt.Println("Init data...")
-	//InitData()
-	//fmt.Println("Init data done.")
+	// 初始化数据
+	fmt.Println("Init data...")
+	InitData()
+	fmt.Println("Init data done.")
 }
 
 // CloseMyDb
