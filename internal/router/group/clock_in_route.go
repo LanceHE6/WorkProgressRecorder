@@ -6,6 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// ClockInRoute
+//
+//	@Description: 打卡路由
+//	@param group gin.RouterGroup
 func ClockInRoute(group *gin.RouterGroup) {
 	clockInHandler := handler.ClockInHandler{}
 
