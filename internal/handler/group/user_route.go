@@ -1,8 +1,8 @@
 package group
 
 import (
-	"WorkProgressRecord/internal/handler"
 	"WorkProgressRecord/internal/middleware"
+	"WorkProgressRecord/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,25 +11,25 @@ import (
 //	@Description: 用户路由组
 //	@param group *gin.RouterGroup 路由组
 func UserRoute(group *gin.RouterGroup) {
-	userHandler := handler.UserHandler{}
+	userService := service.NewUserService()
 
 	userGroup := group.Group("/user")
 	userGroup.POST("/login", func(context *gin.Context) {
-		userHandler.Login(context)
+		userService.Login(context)
 	})
 	userGroup.POST("/import", middleware.AuthMiddleware(), func(context *gin.Context) {
-		userHandler.ImportUser(context)
+		userService.Import(context)
 	})
 	userGroup.PUT("/update/psw", middleware.AuthMiddleware(), func(context *gin.Context) {
-		userHandler.UpdatePassword(context)
+		userService.UpdatePassword(context)
 	})
 	userGroup.GET("/target", middleware.AuthMiddleware(), func(context *gin.Context) {
-		userHandler.GetTargetInfo(context)
+		userService.GetUserTargetInfo(context)
 	})
 	userGroup.GET("/info", middleware.AuthMiddleware(), func(context *gin.Context) {
-		userHandler.GetUserInfo(context)
+		userService.GetUserInfo(context)
 	})
 	userGroup.GET("/search", middleware.AuthMiddleware(), func(context *gin.Context) {
-		userHandler.SearchUsers(context)
+		userService.SearchUsers(context)
 	})
 }

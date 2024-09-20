@@ -1,21 +1,20 @@
 package service
 
 import (
-	"WorkProgressRecord/internal/model"
 	"WorkProgressRecord/internal/service/impl"
-	"WorkProgressRecord/pkg"
+	"github.com/gin-gonic/gin"
 )
 
 // UserService
 //
 //	@Description: 用户服务接口
 type UserService interface {
-	Login(account, password string) *pkg.Response
-	Import(users []model.User) *pkg.Response
-	UpdatePassword(id int64, oldPsw, newPsw string) *pkg.Response
-	GetUserTargetInfo(id int64) *pkg.Response
-	GetUserInfo(id int64) *pkg.Response
-	SearchUsers(params pkg.SearchUsersParams) *pkg.Response
+	Login(context *gin.Context)
+	Import(context *gin.Context)
+	UpdatePassword(context *gin.Context)
+	GetUserTargetInfo(context *gin.Context)
+	GetUserInfo(context *gin.Context)
+	SearchUsers(context *gin.Context)
 }
 
 // NewUserService

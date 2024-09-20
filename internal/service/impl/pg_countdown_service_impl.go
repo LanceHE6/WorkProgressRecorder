@@ -3,6 +3,8 @@ package impl
 import (
 	"WorkProgressRecord/config"
 	"WorkProgressRecord/pkg"
+	"github.com/gin-gonic/gin"
+	"net/http"
 	"time"
 )
 
@@ -18,11 +20,12 @@ type PgCountdownServiceImpl struct {
 //	@receiver PgCountdownServiceImpl
 //	@return int 倒计时天数
 //	@return error 错误信息
-func (PgCountdownServiceImpl) GetPgCountdown() *pkg.Response {
+func (PgCountdownServiceImpl) GetPgCountdown(context *gin.Context) {
 	// 解析考研的日期字符串
 	t, err := time.Parse("2006-01-02", config.ServerConfig.PGEE.PGEE_TIME)
 	if err != nil {
-		return pkg.ErrorResponse(1, "解析考研日期失败", err)
+		context.JSON(http.StatusOK, pkg.ErrorResponse(1, "解析考研日期失败", err))
+		return
 	}
 	// 获取当前时间
 	now := time.Now()
@@ -30,7 +33,7 @@ func (PgCountdownServiceImpl) GetPgCountdown() *pkg.Response {
 	d := t.Sub(now)
 	// 将时间差转换为天数
 	days := int(d.Hours() / 24)
-	return pkg.SuccessResponse(map[string]any{
+	context.JSON(http.StatusOK, pkg.SuccessResponse(map[string]any{
 		"days": days,
-	})
+	}))
 }

@@ -1,16 +1,15 @@
 package service
 
 import (
-	"WorkProgressRecord/internal/model"
 	"WorkProgressRecord/internal/service/impl"
-	"WorkProgressRecord/pkg"
+	"github.com/gin-gonic/gin"
 )
 
 // PGGoalService
 //
 //	@Description: 考研目标服务接口
 type PGGoalService interface {
-	InsertAndUpdate(pgGoal model.PostgraduateGoal) *pkg.Response
+	InsertAndUpdate(context *gin.Context)
 }
 
 // NewPGGoalService

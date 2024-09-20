@@ -2,7 +2,7 @@ package main
 
 import (
 	"WorkProgressRecord/config"
-	"WorkProgressRecord/internal/router"
+	"WorkProgressRecord/internal/handler"
 	"WorkProgressRecord/pkg"
 	"github.com/gin-gonic/gin"
 )
@@ -13,7 +13,7 @@ func main() {
 	ginServer.Use(pkg.Cors())
 
 	// 加载路由
-	router.Route(ginServer)
+	handler.Route(ginServer)
 
 	err := ginServer.Run(":" + config.ServerConfig.SERVER.PORT)
 	if err != nil {

@@ -1,16 +1,15 @@
 package service
 
 import (
-	"WorkProgressRecord/internal/model"
 	"WorkProgressRecord/internal/service/impl"
-	"WorkProgressRecord/pkg"
+	"github.com/gin-gonic/gin"
 )
 
 // EmplGoalService
 //
 //	@Description: 就业目标服务接口
 type EmplGoalService interface {
-	InsertAndUpdate(emplGoal model.EmploymentGoal) *pkg.Response
+	InsertAndUpdate(context *gin.Context)
 }
 
 // NewEmplGoalService

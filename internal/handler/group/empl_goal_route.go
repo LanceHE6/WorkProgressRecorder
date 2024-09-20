@@ -1,8 +1,8 @@
 package group
 
 import (
-	"WorkProgressRecord/internal/handler"
 	"WorkProgressRecord/internal/middleware"
+	"WorkProgressRecord/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,12 +11,12 @@ import (
 //	@Description: 就业目标路由组
 //	@param group *gin.RouterGroup 路由组
 func EmplGoalRoute(group *gin.RouterGroup) {
-	emplGoalHandler := handler.EmplGoalHandler{}
+	emplGoalService := service.NewEmplGoalService()
 
 	emplGoalGroup := group.Group("/emgl")
 	emplGoalGroup.Use(middleware.AuthMiddleware())
 	emplGoalGroup.POST("/add", func(context *gin.Context) {
-		emplGoalHandler.AddAndUpdateEmplGoal(context)
+		emplGoalService.InsertAndUpdate(context)
 	})
 
 }

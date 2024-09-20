@@ -1,7 +1,7 @@
 package group
 
 import (
-	"WorkProgressRecord/internal/handler"
+	"WorkProgressRecord/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,9 +10,9 @@ import (
 //	@Description: 考研倒计时路由
 //	@param group *gin.RouterGroup 路由组
 func PgCountDownRoute(group *gin.RouterGroup) {
-	pgCDHandler := handler.PgCountdownHandler{}
+	pgCDService := service.NewPgCountdownService()
 	pgGoalGroup := group.Group("/pgee")
 	pgGoalGroup.GET("/cd", func(context *gin.Context) {
-		pgCDHandler.GetPgCountdown(context)
+		pgCDService.GetPgCountdown(context)
 	})
 }

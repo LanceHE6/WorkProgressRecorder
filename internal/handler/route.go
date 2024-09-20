@@ -1,7 +1,7 @@
-package router
+package handler
 
 import (
-	"WorkProgressRecord/internal/router/group"
+	"WorkProgressRecord/internal/handler/group"
 	"github.com/gin-gonic/gin"
 )
 
