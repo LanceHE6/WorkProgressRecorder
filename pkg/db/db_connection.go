@@ -16,7 +16,7 @@ var db *gorm.DB
 // Init
 //
 //	@Description: 初始化数据库连接
-func Init() {
+func init() {
 	var err error
 
 	// 从环境变量获取配置
