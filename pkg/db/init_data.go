@@ -19,7 +19,7 @@ func InitData() {
 		Password:   pkg.HashPsw("admin"),
 		Name:       "admin",
 		Permission: 2,
-	}, "admin", "account")
+	}, "8888888888", "account")
 }
 
 // createIfNotExists
