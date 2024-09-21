@@ -74,6 +74,31 @@ func AuthMiddleware() gin.HandlerFunc {
 	}
 }
 
+// IsAdminMiddleware 管理员鉴权中间件 >=2
+//
+//	@Description: 管理员鉴权中间件
+//	@return gin.HandlerFunc
+func IsAdminMiddleware() gin.HandlerFunc {
+	return func(context *gin.Context) {
+		AuthMiddleware()
+		// 根据token判断permission是否大于等于2
+		myClaims, err := GetUserInfoByContext(context)
+		if err != nil {
+			context.JSON(http.StatusUnauthorized, pkg.NewResponse(19, "非法token", nil))
+			context.Abort()
+			return
+		}
+
+		if myClaims.Permission >= 2 {
+			context.Next()
+		} else {
+			context.JSON(http.StatusForbidden, pkg.NewResponse(1, "权限拒绝", nil))
+			context.Abort()
+			return
+		}
+	}
+}
+
 // GetUserInfoByContext
 //
 //	@Description: 从context中获取用户信息
