@@ -15,7 +15,7 @@ import (
 func InitData() {
 	// 初始化用户数据
 	createIfNotExists(db, &model.User{
-		Account:    "admin",
+		Account:    "8888888888",
 		Password:   pkg.HashPsw("admin"),
 		Name:       "admin",
 		Permission: 2,
