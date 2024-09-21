@@ -17,7 +17,7 @@ func UserRoute(group *gin.RouterGroup) {
 	userGroup.POST("/login", func(context *gin.Context) {
 		userService.Login(context)
 	})
-	userGroup.POST("/import", middleware.AuthMiddleware(), func(context *gin.Context) {
+	userGroup.POST("/import", middleware.IsAdminMiddleware(), func(context *gin.Context) {
 		userService.Import(context)
 	})
 	userGroup.PUT("/update/psw", middleware.AuthMiddleware(), func(context *gin.Context) {
