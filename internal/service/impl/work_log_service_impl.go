@@ -7,6 +7,7 @@ import (
 	"WorkProgressRecord/pkg"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 type WorkLogServiceImpl struct {
@@ -86,13 +87,21 @@ func (w WorkLogServiceImpl) AddStatusTimeLine(context *gin.Context) {
 //	@receiver w WorkLogServiceImpl
 //	@param context *gin.Context
 func (w WorkLogServiceImpl) GetUserWorkLog(context *gin.Context) {
-	userInfo, err := middleware.GetUserInfoByContext(context)
-	if err != nil {
-		context.JSON(http.StatusBadRequest, pkg.ErrorResponse(-1, "无法获取用户id", err))
-		return
+	var uid int64
+	if context.Query("uid") != "" {
+		uidStr, _ := strconv.Atoi(context.Query("uid"))
+		uid = int64(uidStr)
+
+	} else {
+		userInfo, err := middleware.GetUserInfoByContext(context)
+		if err != nil {
+			context.JSON(http.StatusBadRequest, pkg.ErrorResponse(-1, "无法获取用户id", err))
+			return
+		}
+		uid = userInfo.ID
 	}
 	workLogRepo := repo.NewWorkLogRepo()
-	workLogs, err := workLogRepo.SelectByUID(userInfo.ID)
+	workLogs, err := workLogRepo.SelectByUID(uid)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, pkg.ErrorResponse(1, "获取用户工作日志失败", err))
 		return
