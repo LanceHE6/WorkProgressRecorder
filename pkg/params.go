@@ -32,3 +32,13 @@ const (
 	TimeSlotNight     TimeSlot = "晚上"
 	TimeSlotAllDay    TimeSlot = "全天"
 )
+
+// SearchPostsParams
+//
+//	@Description: 查询帖子参数
+type SearchPostsParams struct {
+	Page  *int // 页码
+	Limit *int // 每页条数
+
+	UID *int64 // 用户ID
+}

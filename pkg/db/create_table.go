@@ -15,4 +15,5 @@ func CreateTable(db *gorm.DB) {
 	db.AutoMigrate(&model.EmploymentGoal{})
 	db.AutoMigrate(&model.ClockIn{})
 	db.AutoMigrate(&model.WorkLog{})
+	db.AutoMigrate(&model.Post{})
 }
