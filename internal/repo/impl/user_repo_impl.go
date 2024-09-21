@@ -108,6 +108,12 @@ func (u UserRepositoryImpl) SearchUsers(params pkg.SearchUsersParams) ([]model.U
 	if params.Name != nil {
 		query = query.Where("name like ?", "%"+*params.Name+"%")
 	}
+	if params.Keyword != nil {
+		query = query.Where("account like ? OR name like ? ",
+			"%"+*params.Keyword+"%",
+			"%"+*params.Keyword+"%",
+		)
+	}
 	if params.Direction != nil {
 		query = query.Where("direction = ?", *params.Direction)
 	}

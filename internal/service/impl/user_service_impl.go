@@ -256,6 +256,11 @@ func (s UserServiceImpl) SearchUsers(context *gin.Context) {
 		direction, _ := strconv.Atoi(context.Query("direction"))
 		params.Direction = &direction
 	}
+	if context.Query("keyword") != "" {
+		keyword := context.Query("keyword")
+		params.Keyword = &keyword
+	}
+
 	users, count := repo.NewUserRepository().SearchUsers(params)
 	pgGoalRepo := repo.NewPGGoalRepo()
 	emplGoalRepo := repo.NewEmplGoalRepo()

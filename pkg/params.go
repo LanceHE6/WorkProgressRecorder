@@ -10,6 +10,7 @@ type SearchUsersParams struct {
 	Account   *string // 账号
 	Name      *string // 姓名
 	Direction *int    // 方向
+	Keyword   *string // 关键字
 }
 
 // SearchClockInParams
