@@ -29,7 +29,7 @@ func UserRoute(group *gin.RouterGroup) {
 	userGroup.GET("/info", middleware.AuthMiddleware(), func(context *gin.Context) {
 		userService.GetUserInfo(context)
 	})
-	userGroup.GET("/search", middleware.AuthMiddleware(), func(context *gin.Context) {
+	userGroup.GET("/search", middleware.IsAdminMiddleware(), func(context *gin.Context) {
 		userService.SearchUsers(context)
 	})
 }
