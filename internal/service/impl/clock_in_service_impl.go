@@ -7,6 +7,7 @@ import (
 	"WorkProgressRecord/pkg"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -86,4 +87,37 @@ func (i ClockInServiceImpl) IsUserClockIn(context *gin.Context) {
 	} else {
 		context.JSON(http.StatusOK, pkg.NewResponse(0, "您还未打卡哦", nil))
 	}
+}
+
+func (i ClockInServiceImpl) SearchClockIn(context *gin.Context) {
+	var params pkg.SearchClockInParams
+	page, _ := strconv.Atoi(context.DefaultQuery("page", "1"))
+	params.Page = &page
+	limit, _ := strconv.Atoi(context.DefaultQuery("page_size", "10"))
+	params.Limit = &limit
+	if context.Query("uid") != "" {
+		uid, _ := strconv.Atoi(context.Query("uid"))
+		uid64 := int64(uid)
+		params.UID = &uid64
+	}
+	if context.Query("time_slot") != "" {
+		timeSlot := context.Query("time_slot")
+		params.TimeSlot = (*pkg.TimeSlot)(&timeSlot)
+	}
+	if context.Query("date") != "" {
+		date := context.Query("date")
+		params.Date = &date
+	}
+	clockInRepo := repo.NewClockInRepo()
+	clockInList, count, err := clockInRepo.SearchClockIns(params)
+	if err != nil {
+		context.JSON(http.StatusOK, pkg.ErrorResponse(-1, "查询失败", err))
+		return
+	}
+	context.JSON(http.StatusOK, pkg.SuccessResponse(map[string]any{
+		"rows":      clockInList,
+		"total":     count,
+		"page":      page,
+		"page_size": limit,
+	}))
 }

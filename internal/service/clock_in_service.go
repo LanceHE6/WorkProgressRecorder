@@ -11,6 +11,7 @@ import (
 type ClockInService interface {
 	AddClockIn(context *gin.Context)
 	IsUserClockIn(context *gin.Context)
+	SearchClockIn(context *gin.Context)
 }
 
 // NewClockInService

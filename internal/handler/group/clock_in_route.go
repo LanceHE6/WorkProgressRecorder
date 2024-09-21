@@ -21,4 +21,7 @@ func ClockInRoute(group *gin.RouterGroup) {
 	clockInGroup.GET("/is_clock_in", func(context *gin.Context) {
 		clockInService.IsUserClockIn(context)
 	})
+	clockInGroup.GET("/search", middleware.IsAdminMiddleware(), func(context *gin.Context) {
+		clockInService.SearchClockIn(context)
+	})
 }

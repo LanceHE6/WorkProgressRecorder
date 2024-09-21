@@ -3,6 +3,7 @@ package repo
 import (
 	"WorkProgressRecord/internal/model"
 	"WorkProgressRecord/internal/repo/impl"
+	"WorkProgressRecord/pkg"
 )
 
 // ClockInRepo
@@ -11,6 +12,7 @@ import (
 type ClockInRepo interface {
 	Insert(clockInData model.ClockIn) error
 	SelectUserLatest(uid int64) (model.ClockIn, error)
+	SearchClockIns(params pkg.SearchClockInParams) ([]model.ClockIn, int, error)
 }
 
 // NewClockInRepo
