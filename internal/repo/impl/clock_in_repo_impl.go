@@ -56,7 +56,7 @@ func (c *ClockInRepoImpl) SelectUserLatest(uid int64) (model.ClockIn, error) {
 //	 @return int 总数
 func (c *ClockInRepoImpl) SearchClockIns(params pkg.SearchClockInParams) ([]model.ClockIn, int, error) {
 	var clockIns []model.ClockIn
-	query := c.modelDB()
+	query := c.modelDB().Preload("User")
 	// 构建查询
 	if params.UID != nil {
 		query = query.Where("uid = ?", *params.UID)
