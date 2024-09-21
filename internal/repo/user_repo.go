@@ -15,7 +15,7 @@ type UserRepository interface {
 	UpdateSessionID(id int64, sessionID string) error
 	UpdateDirection(id int64, direction int) error
 	UpdatePassword(id int64, newPsw string) error
-	SearchUsers(params pkg.SearchUsersParams) []model.User
+	SearchUsers(params pkg.SearchUsersParams) ([]model.User, int)
 }
 
 // NewUserRepository

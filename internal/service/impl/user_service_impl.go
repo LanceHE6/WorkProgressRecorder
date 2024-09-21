@@ -256,7 +256,7 @@ func (s UserServiceImpl) SearchUsers(context *gin.Context) {
 		direction, _ := strconv.Atoi(context.Query("direction"))
 		params.Direction = &direction
 	}
-	users := repo.NewUserRepository().SearchUsers(params)
+	users, count := repo.NewUserRepository().SearchUsers(params)
 	pgGoalRepo := repo.NewPGGoalRepo()
 	emplGoalRepo := repo.NewEmplGoalRepo()
 
@@ -284,5 +284,10 @@ func (s UserServiceImpl) SearchUsers(context *gin.Context) {
 		}
 		data = append(data, userInfo)
 	}
-	context.JSON(http.StatusOK, pkg.SuccessResponse(data))
+	context.JSON(http.StatusOK, pkg.SuccessResponse(map[string]any{
+		"rows":      data,
+		"total":     count,
+		"page":      page,
+		"page_size": limit,
+	}))
 }
