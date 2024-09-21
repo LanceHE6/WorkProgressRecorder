@@ -8,6 +8,8 @@ import 'vfonts/Lato.css'
 import 'vfonts/FiraCode.css'
 
 const app = createApp(App)
+// axios.defaults.baseURL = 'http://26.107.171.13:8070'
+axios.defaults.baseURL = 'http://127.0.0.1:8070'
 
 app.provide("axios", axios)
 
