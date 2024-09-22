@@ -129,12 +129,13 @@
 <script setup>
 import { CalendarOutline, AppsOutline, GolfOutline, ReceiptOutline, PersonOutline } from '@vicons/ionicons5'
 import {router} from "../router/index.js";
-import {onMounted, reactive} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import { useMessage } from 'naive-ui'
 import {axiosGet, axiosPost} from "../utils/axiosUtil.js";
 import {CURRENT_USER, getUser, setUser} from "../utils/appManager.js";
 
 const message = useMessage();
+const formRef = ref(null)
 
 const state = reactive({
   loginForm: {
@@ -198,27 +199,30 @@ function jumpTo(path){
 }
 
 async function login(){
-  const result = await axiosPost(
-      {
-        url: '/user/login',
-        data: state.loginForm,
-        name: 'login',
+  if (!formRef) return
+  await formRef.value?.validate(async (errors) => {
+    if (!errors) {
+      const result = await axiosPost(
+          {
+            url: '/user/login',
+            data: state.loginForm,
+            name: 'login',
+          }
+      )
+      if (result) {
+        if (result.data.code === 0) {
+          setUser(result.data.data.user)
+          localStorage.setItem("token", result.data.data.token)
+          message.success('登录成功！')
+          state.showModal = false
+        } else {
+          message.error('账号或密码错误！')
+        }
+      } else {
+        message.error('网络请求错误！')
       }
-  )
-  if(result){
-    if(result.data.code === 0){
-      setUser(result.data.data.user)
-      localStorage.setItem("token", result.data.data.token)
-      message.success('登录成功！')
-      state.showModal = false
     }
-    else{
-      message.error('账号或密码错误！')
-    }
-  }
-  else{
-    message.error('网络请求错误！')
-  }
+  })
 }
 
 function logout(){
