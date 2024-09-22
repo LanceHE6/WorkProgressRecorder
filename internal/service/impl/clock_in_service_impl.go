@@ -43,8 +43,10 @@ func (ClockInServiceImpl) AddClockIn(context *gin.Context) {
 	clockInRepo := repo.NewClockInRepo()
 	latestClockIn, err := clockInRepo.SelectUserLatest(userInfo.ID)
 	if err != nil {
-		context.JSON(http.StatusOK, pkg.ErrorResponse(-2, "打卡失败", err))
-		return
+		if err.Error() != "record not found" {
+			context.JSON(http.StatusOK, pkg.ErrorResponse(-2, "打卡失败", err))
+			return
+		}
 	}
 	if pkg.IsInCurrentPeriod(latestClockIn.ClockInTime) {
 		context.JSON(http.StatusOK, pkg.FailedResponse(1, "您在当前时间段已经打过卡了哦"))
@@ -78,6 +80,10 @@ func (i ClockInServiceImpl) IsUserClockIn(context *gin.Context) {
 	clockInRepo := repo.NewClockInRepo()
 	latestClockIn, err := clockInRepo.SelectUserLatest(userInfo.ID)
 	if err != nil {
+		if err.Error() == "record not found" {
+			context.JSON(http.StatusOK, pkg.NewResponse(0, "您还未打卡哦", nil))
+			return
+		}
 		context.JSON(http.StatusOK, pkg.ErrorResponse(-2, "未知错误", err))
 		return
 	}
