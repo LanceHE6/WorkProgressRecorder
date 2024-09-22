@@ -9,7 +9,10 @@ import 'vfonts/FiraCode.css'
 
 const app = createApp(App)
 // axios.defaults.baseURL = 'http://26.107.171.13:8070'
-axios.defaults.baseURL = 'http://127.0.0.1:8070'
+
+const ENV_SERVER_URL = import.meta.env.SERVER_URL;
+const SERVER_URL = 'http://192.168.8.108:8070'
+axios.defaults.baseURL = ENV_SERVER_URL ? ENV_SERVER_URL : SERVER_URL
 
 app.provide("axios", axios)
 
