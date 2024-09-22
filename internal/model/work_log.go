@@ -27,6 +27,7 @@ type WorkLog struct {
 type StatusTime struct {
 	CreatedAt int64  `json:"created_at"` // 创建时间
 	Status    string `json:"status"`     // 状态
+	Stage     int    `json:"stage"`      // 阶段
 }
 
 type StatusTimeLine []StatusTime
