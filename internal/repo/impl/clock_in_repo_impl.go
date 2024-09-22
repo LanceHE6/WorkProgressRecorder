@@ -93,6 +93,7 @@ func (c *ClockInRepoImpl) SearchClockIns(params pkg.SearchClockInParams) ([]mode
 		query = query.Offset((*params.Page - 1) * *params.Limit)
 	}
 	// 执行查询
+	query = query.Order("created_at desc")
 	err := query.Find(&clockIns).Error
 	if err != nil {
 		return nil, 0, err
