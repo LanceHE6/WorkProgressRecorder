@@ -142,7 +142,7 @@
           />
         </n-form-item>
 
-        <n-form-item v-if="directionForm.direction === 2" path="status" label="方向">
+        <n-form-item v-if="directionForm.direction === 2" path="status" label="状态">
           <n-select
               v-model:value="directionForm.status"
               :options="[{label: '未拿到offer', value: 1},
