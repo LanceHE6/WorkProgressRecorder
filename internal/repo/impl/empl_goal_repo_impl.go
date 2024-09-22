@@ -2,6 +2,7 @@ package impl
 
 import (
 	"WorkProgressRecord/internal/model"
+	"WorkProgressRecord/pkg"
 	"WorkProgressRecord/pkg/db"
 	"github.com/jinzhu/gorm"
 )
@@ -34,11 +35,20 @@ func (e *EmplGoalRepoImpl) Insert(emplGoal model.EmploymentGoal) error {
 		return err
 	}
 	// 更新用户方向
-	err = tx.Model(&model.User{}).Where("id = ?", emplGoal.UID).Update("direction", 2).Error
+	var user model.User
+	err = tx.Model(&model.User{}).Where("id = ?", emplGoal.UID).First(&user).Error
 	if err != nil {
 		// 回滚事务
 		tx.Rollback()
 		return err
+	}
+	if !pkg.IsContainGoal(user.Direction, model.Employment) {
+		user.Direction = append(user.Direction, model.Employment)
+	}
+	err = tx.Model(&model.User{}).Where("id = ?", emplGoal.UID).Update("direction", user.Direction).Error
+	if err != nil {
+		// 回滚事务
+		tx.Rollback()
 	}
 	err = tx.Commit().Error
 	if err != nil {
@@ -61,11 +71,20 @@ func (e *EmplGoalRepoImpl) Update(emplGoal model.EmploymentGoal) error {
 		return err
 	}
 	// 更新用户方向
-	err = tx.Model(&model.User{}).Where("id = ?", emplGoal.UID).Update("direction", 2).Error
+	var user model.User
+	err = tx.Model(&model.User{}).Where("id = ?", emplGoal.UID).First(&user).Error
 	if err != nil {
 		// 回滚事务
 		tx.Rollback()
 		return err
+	}
+	if !pkg.IsContainGoal(user.Direction, model.Employment) {
+		user.Direction = append(user.Direction, model.Employment)
+	}
+	err = tx.Model(&model.User{}).Where("id = ?", emplGoal.UID).Update("direction", user.Direction).Error
+	if err != nil {
+		// 回滚事务
+		tx.Rollback()
 	}
 	err = tx.Commit().Error
 	if err != nil {
