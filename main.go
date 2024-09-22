@@ -8,6 +8,8 @@ import (
 )
 
 func main() {
+	pkg.LogoPrint()
+
 	ginServer := gin.Default()
 	// 跨域
 	ginServer.Use(pkg.Cors())
