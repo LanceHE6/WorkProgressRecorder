@@ -8,6 +8,7 @@ const route = useRoute();
 
 </script>
 
+<!--test-->
 <template>
   <n-config-provider :locale="zhCN" :date-locale="dateZhCN">
     <n-dialog-provider>
