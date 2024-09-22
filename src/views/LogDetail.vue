@@ -36,6 +36,7 @@
           </n-button>
         </div>
         <div class="title-time">
+          <n-empty v-if="timeline.length <= 0" description="无进度"/>
           <n-timeline>
             <n-timeline-item
                 v-for="item in timeline"
