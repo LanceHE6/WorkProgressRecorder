@@ -26,7 +26,7 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 ## 配置 Nginx, 可以替换为具体的配置文件
 #COPY nginx.conf /etc/nginx/nginx.conf
 
-ENV SERVER_URL = "172.17.0.3"
+#ENV SERVER_URL = "172.17.0.3"
 # 暴露 80 端口
 EXPOSE 80
 
