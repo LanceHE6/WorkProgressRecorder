@@ -85,7 +85,7 @@ func (u UserRepositoryImpl) UpdateSessionID(id int64, sessionID string) error {
 //	@param id int64 用户id
 //	@param direction int 方向
 //	@return error 错误信息
-func (u UserRepositoryImpl) UpdateDirection(id int64, direction int) error {
+func (u UserRepositoryImpl) UpdateDirection(id int64, direction model.Direction) error {
 	return u.modelDB().Where("id = ?", id).Update("direction", direction).Error
 }
 
@@ -133,4 +133,15 @@ func (u UserRepositoryImpl) SearchUsers(params pkg.SearchUsersParams) ([]model.U
 	var users []model.User
 	query.Find(&users)
 	return users, count
+}
+
+// UpdateUserInfo
+//
+//	@Description: 更新用户信息
+//	@receiver u UserRepositoryImpl
+//	@param id int64
+//	@param user model.User
+//	@return error 错误信息
+func (u UserRepositoryImpl) UpdateUserInfo(id int64, user model.User) error {
+	return u.modelDB().Where("id = ?", id).Updates(user).Error
 }

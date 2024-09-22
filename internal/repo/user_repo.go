@@ -13,9 +13,10 @@ type UserRepository interface {
 	SelectByAccountAndPsw(account, password string) *model.User
 	Insert(user model.User) error
 	UpdateSessionID(id int64, sessionID string) error
-	UpdateDirection(id int64, direction int) error
+	UpdateDirection(id int64, direction model.Direction) error
 	UpdatePassword(id int64, newPsw string) error
 	SearchUsers(params pkg.SearchUsersParams) ([]model.User, int)
+	UpdateUserInfo(id int64, user model.User) error
 }
 
 // NewUserRepository

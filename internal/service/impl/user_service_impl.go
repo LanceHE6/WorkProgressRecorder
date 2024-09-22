@@ -129,7 +129,8 @@ func (s UserServiceImpl) UpdatePassword(context *gin.Context) {
 	// updatePasswordRequest
 	// @Description: 修改密码请求参数结构体
 	type updatePasswordRequest struct {
-		OldPassword string `json:"old_password" form:"old_password" binding:"required"`
+		ID          int64  `json:"id" form:"id"`
+		OldPassword string `json:"old_password" form:"old_password"`
 		NewPassword string `json:"new_password" form:"new_password" binding:"required"`
 	}
 	var data updatePasswordRequest
@@ -146,18 +147,37 @@ func (s UserServiceImpl) UpdatePassword(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, pkg.FailedResponse(-1, "用户不存在"))
 		return
 	}
-	if !pkg.CheckPsw(user.Password, data.OldPassword) {
-		context.JSON(http.StatusBadRequest, pkg.FailedResponse(-2, "原密码错误"))
-		return
-	}
-	err = repo.NewUserRepository().UpdatePassword(claims.ID, data.NewPassword)
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, pkg.ErrorResponse(-3, "修改密码失败", err))
-		return
+	// 修改他人密码
+	if data.ID != 0 && data.ID != claims.ID {
+		// 非管理员权限
+		if claims.Permission != 2 {
+			context.JSON(http.StatusBadRequest, pkg.FailedResponse(1, "权限拒绝"))
+			return
+		}
+		err = repo.NewUserRepository().UpdatePassword(data.ID, data.NewPassword)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, pkg.ErrorResponse(-3, "修改密码失败", err))
+			return
+		} else {
+			context.JSON(http.StatusOK, pkg.SuccessResponse(nil))
+			return
+		}
 	} else {
-		context.JSON(http.StatusOK, pkg.SuccessResponse(nil))
-		return
+		// 修改自己密码
+		if !pkg.CheckPsw(user.Password, data.OldPassword) {
+			context.JSON(http.StatusBadRequest, pkg.FailedResponse(-2, "原密码错误"))
+			return
+		}
+		err = repo.NewUserRepository().UpdatePassword(claims.ID, data.NewPassword)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, pkg.ErrorResponse(-3, "修改密码失败", err))
+			return
+		} else {
+			context.JSON(http.StatusOK, pkg.SuccessResponse(nil))
+			return
+		}
 	}
+
 }
 
 // GetUserTargetInfo
@@ -176,37 +196,38 @@ func (s UserServiceImpl) GetUserTargetInfo(context *gin.Context) {
 		context.JSON(http.StatusOK, pkg.FailedResponse(-1, "用户不存在"))
 		return
 	}
-	if user.Direction == 0 {
+	if user.Direction == nil {
 		context.JSON(http.StatusOK, pkg.SuccessResponse(nil))
 		return
 	}
+	goalData := map[string]any{
+		"pg_goal":   nil,
+		"empl_goal": nil,
+	}
+
 	// 考研为目标
-	if user.Direction == 1 {
+	if pkg.IsContainGoal(user.Direction, model.Postgraduate) {
 		pgGoal, err := repo.NewPGGoalRepo().SelectByUID(userInfo.ID)
 		if err != nil {
 			context.JSON(http.StatusInternalServerError, pkg.ErrorResponse(-2, "查询考研目标失败", err))
 			return
 		}
-		context.JSON(http.StatusOK, pkg.SuccessResponse(map[string]any{
-			"direction": user.Direction,
-			"goal":      pgGoal,
-		}))
-		return
+		goalData["pg_goal"] = pgGoal
 	}
 	// 就业为目标
-	if user.Direction == 2 {
+	if pkg.IsContainGoal(user.Direction, model.Employment) {
 		emplGoal, err := repo.NewEmplGoalRepo().SelectByUID(userInfo.ID)
 		if err != nil {
 			context.JSON(http.StatusInternalServerError, pkg.ErrorResponse(-2, "查询就业目标失败", err))
 			return
 		}
-		context.JSON(http.StatusOK, pkg.SuccessResponse(map[string]any{
-			"direction": user.Direction,
-			"goal":      emplGoal,
-		}))
-		return
+		goalData["empl_goal"] = emplGoal
 	}
-	context.JSON(http.StatusOK, pkg.SuccessResponse(nil))
+	resultData := map[string]any{
+		"direction": user.Direction,
+		"goal":      goalData,
+	}
+	context.JSON(http.StatusOK, pkg.SuccessResponse(resultData))
 }
 
 // GetUserInfo
@@ -267,26 +288,32 @@ func (s UserServiceImpl) SearchUsers(context *gin.Context) {
 
 	// 构造返回消息
 	data := make([]map[string]any, 0)
+
 	for _, user := range users {
 		userInfo := make(map[string]any)
 		userInfo["user"] = user
-		if user.Direction == 1 {
+		goalData := map[string]any{
+			"pg_goal":   nil,
+			"empl_goal": nil,
+		}
+		if pkg.IsContainGoal(user.Direction, model.Postgraduate) {
 			pgGoal, err := pgGoalRepo.SelectByUID(user.ID)
 			if err != nil {
 				userInfo["goal"] = "error: " + err.Error()
-				continue
+			} else {
+				goalData["pg_goal"] = pgGoal
 			}
-			userInfo["goal"] = pgGoal
-		} else if user.Direction == 2 {
+		}
+		if pkg.IsContainGoal(user.Direction, model.Employment) {
 			emplGoal, err := emplGoalRepo.SelectByUID(user.ID)
 			if err != nil {
 				userInfo["goal"] = "error: " + err.Error()
-				continue
+
+			} else {
+				goalData["empl_goal"] = emplGoal
 			}
-			userInfo["goal"] = emplGoal
-		} else {
-			userInfo["goal"] = nil
 		}
+		userInfo["goal"] = goalData
 		data = append(data, userInfo)
 	}
 	context.JSON(http.StatusOK, pkg.SuccessResponse(map[string]any{
@@ -295,4 +322,40 @@ func (s UserServiceImpl) SearchUsers(context *gin.Context) {
 		"page":      page,
 		"page_size": limit,
 	}))
+}
+
+// UpdateUserInfo
+//
+//	@Description: 更新用户信息
+//	@receiver s
+//	@param context
+func (s UserServiceImpl) UpdateUserInfo(context *gin.Context) {
+	type updateUserInfo struct {
+		Class string `json:"class" form:"class" binding:"required"`
+		Major string `json:"major" form:"major" binding:"required"`
+	}
+	var data updateUserInfo
+	if err := context.ShouldBind(&data); err != nil {
+		context.JSON(http.StatusBadRequest, pkg.FailedResponse(100, err.Error()))
+		return
+	}
+	claims, err := middleware.GetUserInfoByContext(context)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, pkg.FailedResponse(-1, err.Error()))
+	}
+	userRepo := repo.NewUserRepository()
+	user := userRepo.SelectByID(claims.ID)
+	if user == nil {
+		context.JSON(http.StatusBadRequest, pkg.FailedResponse(-1, "用户不存在"))
+		return
+	}
+
+	user.Class = data.Class
+	user.Major = data.Major
+	err = userRepo.UpdateUserInfo(claims.ID, *user)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, pkg.ErrorResponse(1, "更新失败", err))
+		return
+	}
+	context.JSON(http.StatusOK, pkg.SuccessResponse(nil))
 }
