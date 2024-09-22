@@ -81,6 +81,17 @@
       </n-form-item>
     </n-form>
   </n-modal>
+
+  <n-modal
+      v-model:show="showExperienceModal"
+      preset="dialog"
+      title="找工作心得/困难"
+      positive-text="确认"
+  >
+    <n-text>
+      功能还在完善中，敬请期待...
+    </n-text>
+  </n-modal>
 </template>
 
 <script setup>
