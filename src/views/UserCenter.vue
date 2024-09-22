@@ -260,7 +260,7 @@ const user = CURRENT_USER
 const dataCol = ref([
   {property: "account", label: "账号", isUserProp: true},
   {property: "direction", label: "方向", isUserProp: true, isMapping: true, mappingList:[
-      {label: '未确定', value: 0},
+      {label: '未填写', value: 0},
       {label: '考研', value: 1},
       {label: '就业', value: 2},
     ]},
