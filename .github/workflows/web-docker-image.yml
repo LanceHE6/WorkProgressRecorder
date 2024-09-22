@@ -1,0 +1,46 @@
+name: Build Test Environment Image
+on:
+  push:
+    branches:
+      - frontend-dev
+
+env:
+  # 阿里云镜像仓库地址
+  DOCKER_REGISTRY: registry.cn-hangzhou.aliyuncs.com/hycer/work-progress-recorder-web
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Shanghai
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Check commit message
+        id: check_message
+        run: |
+          if echo "${{ github.event.head_commit.message }}" | grep -q "#docker-push"; then  
+            echo "::set-output name=RUN_TESTS::true"  
+          else  
+            echo "::set-output name=RUN_TESTS::false"  
+          fi  
+
+      - name: Login to Alibaba Cloud Container Registry
+        if: steps.check_message.outputs.RUN_TESTS == 'true'
+        uses: aliyun/acr-login@v1
+        with:
+          # 引用仓库的secrets登录阿里云容器镜像服务
+          login-server: registry.cn-hangzhou.aliyuncs.com
+          username: ${{ secrets.ALI_DOCKER_USERNAME }}
+          password: ${{ secrets.ALI_DOCKER_PASSWORD }}
+
+      - name: Build and push
+        if: steps.check_message.outputs.RUN_TESTS == 'true'
+        uses: docker/build-push-action@v4
+        with:
+          context: ./
+          dockerfile: Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}:latest
