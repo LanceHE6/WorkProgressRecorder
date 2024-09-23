@@ -47,8 +47,16 @@
                 type="primary"
                 size="large"
                 @click="uploadUser"
+                style="margin-right: 10px"
             >
               导入
+            </n-button>
+            <n-button
+                type="primary"
+                size="large"
+                @click="downloadUserList"
+            >
+              导出
             </n-button>
           </n-row>
           <n-data-table
@@ -56,6 +64,7 @@
               :data="userList"
               :bordered="false"
               striped
+              :max-height="600"
               style="font-size: 18px"
           />
           <n-pagination
@@ -105,6 +114,7 @@
               :columns="checkinTableHeader"
               :data="checkinList"
               :bordered="false"
+              :max-height="600"
               striped
               style="font-size: 18px"
           />
@@ -245,10 +255,12 @@ import {getUserPermission, setUser} from "../utils/appManager.js";
 import {NButton, useMessage} from "naive-ui";
 import { ArchiveOutline } from "@vicons/ionicons5";
 import * as XLSX from "xlsx"
+import {mapping} from "../utils/other.js";
 
 const message = useMessage()
 
 const myUpload = ref(null)
+const pageSize = 30
 
 const showGoalModal = ref(false)
 const showUploadModal = ref(false)
@@ -294,9 +306,41 @@ const checkinState = reactive({
   total: 1
 })
 
+const userListDownloadTem = [
+  {label: '学号', prop: 'account', listIndex: 1},
+  {label: '班级', prop: 'class', listIndex: 1},
+  {label: '姓名', prop: 'name', listIndex: 1},
+  {label: '专业', prop: 'major', listIndex: 1},
+  {label: '方向', prop: 'direction', listIndex: 1, isMapping: true, mappingList: [
+      {label: '未填写', value: 0},
+      {label: '考研', value: 1},
+      {label: '就业', value: 2},
+    ]},
+  {label: '目标院校', prop: 'target_university', listIndex: 2},
+  {label: '目标专业', prop: 'target_major', listIndex: 2},
+  {label: '目标分数', prop: 'target_score', listIndex: 2},
+
+  {label: '找工作状态', prop: 'status', listIndex: 2, isMapping: true, mappingList: [
+      {label: '未填写', value: 0},
+      {label: '未拿到offer', value: 1},
+      {label: '已拿到offer', value: 2},
+    ]},
+  {label: '目标公司', prop: 'target_company', listIndex: 2},
+  {label: '目标职位', prop: 'target_job', listIndex: 2},
+  {label: '理想薪资', prop: 'target_salary', listIndex: 2},
+  {label: '目标地区', prop: 'target_area', listIndex: 2},
+]
+
 const userTableHeader = [
+  {title: "序号", key: "number",
+    render: (_, index) => {
+      return `${index + 1}`;
+    }
+  },
   {title: "学号", key: "account"},
+  {title: '班级', key: 'class'},
   {title: "姓名", key: "name"},
+  {title: '专业', key: 'major'},
   {title: "方向", key: "direction",
     sorter: (row1, row2) => row1.direction - row2.direction,
     render(row) {
@@ -355,6 +399,11 @@ const logTableHeader = [
 ]
 
 const checkinTableHeader = [
+  {title: "序号", key: "number",
+    render: (_, index) => {
+      return `${index + 1}`;
+    }
+  },
   { title: "学号", key: "user",
     render(row) {
       return row.user.account
@@ -415,7 +464,7 @@ onMounted( async () => {
 async function getUserList(){
   const result2 = await axiosGet({
     url: '/user/search',
-    params: userState.params,
+    params: {...userState.params, ...{page_size: pageSize}},
     name: 'get-user-list'
   })
   if(result2 && result2.data){
@@ -434,7 +483,7 @@ async function getUserList(){
 async function getCheckinList(){
   const result3 = await axiosGet({
     url: '/clock_in/search',
-    params: checkinState.params,
+    params: {...checkinState.params, ...{page_size: pageSize}},
     name: 'get-checkin-list'
   })
   if(result3 && result3.data){
@@ -558,6 +607,65 @@ async function uploadUserList(userList){
     message.error("网络请求出错了")
   }
   await getUserList()
+}
+
+async function downloadUserList(){
+  let userList
+  let goalList
+  const result = await axiosGet({
+    url: '/user/search',
+    params: {...userState.params , ...{page_size: 10086 * 10086}},
+    name: 'get-all-user-list'
+  })
+  if(result && result.data){
+    //提取user
+    userList = result.data.rows.map(item => item.user);
+    //提取goal
+    goalList = result.data.rows.map(item => item.goal);
+  }
+  else{
+    message.error("网络请求出错了")
+    return
+  }
+
+
+  const myList = getListTem(userListDownloadTem, userList, goalList)
+
+  const workbook = XLSX.utils.book_new();
+  const worksheet = XLSX.utils.json_to_sheet(myList.listResult)
+  console.log("233", myList.listResult)
+  XLSX.utils.book_append_sheet(workbook, worksheet, "sheet1")
+  XLSX.utils.sheet_add_aoa(worksheet, [myList.listHeader], { origin: "A1" });
+  worksheet["!cols"] = new Array(myList.listHeader.length).fill({ wch: 15 });
+  XLSX.writeFileXLSX(workbook, "导出表格.xlsx")
+}
+
+function getListTem(tem, list1, list2){
+  if(list1.length !== list2.length){
+    console.error("getListTem: the length of two lists are not equal")
+    return
+  }
+  const listHeader = []
+  const listResult = []
+  for(const item of tem){
+    listHeader.push(item.label)
+  }
+  for(let i = 0; i < list1.length; i++){
+    const listItem = {}
+    for(const item of tem){
+      if(item.listIndex === 1){
+        listItem[item.prop] = list1[i] && item.prop in list1[i] ? mapping(item, list1[i][item.prop]) : ''
+      }
+      else if(item.listIndex === 2){
+        listItem[item.prop] = list2[i] && item.prop in list2[i] ? mapping(item, list2[i][item.prop]) : ''
+      }
+    }
+    listResult.push(listItem)
+  }
+  return {
+    listHeader: listHeader,
+    listResult: listResult
+  }
 }
 
 async function userPageChange(page){
