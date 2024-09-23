@@ -137,7 +137,19 @@ const logForm = ref({
 const logHead = [
   { title: "公司名称", key: "company_name"},
   { title: "工作岗位", key: "job"},
-  { title: "操作", key: "actions",
+  { title: "薪资", key: "salary"},
+  { title: "工作地区", key: "location"},
+  { title: "最新状态", key: "status",
+    render(row) {
+      return row.status_time_line.length > 0 ? row.status_time_line[row.status_time_line.length - 1].status : '无'
+    }
+  },
+  { title: "最新时间", key: "time",
+    render(row) {
+      return row.status_time_line.length > 0 ? new Date(row.status_time_line[row.status_time_line.length - 1].created_at).toLocaleString() : '无'
+    }
+  },
+  { title: "详情", key: "actions",
     render(row) {
       return h(
           NButton,
