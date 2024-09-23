@@ -43,20 +43,19 @@
   <n-modal
       v-model:show="showCheckInModal"
       preset="dialog"
-      title="打卡地点选择"
+      title="学习打卡"
       positive-text="确认"
       negative-text="算了"
       @positive-click="checkIn">
-        <n-popselect
+        <n-select
             v-model:value="place"
             :options="options"
-            size="medium"
+            placeholder="请选择打卡地点"
+            size="large"
+            style="width: 100%"
             scrollable
         >
-          <n-button style="margin-right: 8px">
-            {{ place || '未选择' }}
-          </n-button>
-        </n-popselect>
+        </n-select>
   </n-modal>
 </template>
 
@@ -75,7 +74,7 @@ const showCheckInModal = ref(false)
 
 const isCheck = ref(true)
 
-const place = ref('')
+const place = ref(null)
 
 const options = [
   {label: '数字图书馆', value: '数字图书馆'},
