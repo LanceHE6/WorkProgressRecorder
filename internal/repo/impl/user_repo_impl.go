@@ -4,6 +4,7 @@ import (
 	"WorkProgressRecord/internal/model"
 	"WorkProgressRecord/pkg"
 	"WorkProgressRecord/pkg/db"
+	"errors"
 	"github.com/jinzhu/gorm"
 )
 
@@ -144,4 +145,21 @@ func (u UserRepositoryImpl) SearchUsers(params pkg.SearchUsersParams) ([]model.U
 //	@return error 错误信息
 func (u UserRepositoryImpl) UpdateUserInfo(id int64, user model.User) error {
 	return u.modelDB().Where("id = ?", id).Updates(user).Error
+}
+
+// DeleteDirection
+//
+//	@Description: 删除用户方向
+//	@receiver u UserRepositoryImpl
+//	@param id int64 用户id
+//	@param direction model.DirectionType 方向
+//	@return error 错误信息
+func (u UserRepositoryImpl) DeleteDirection(id int64, direction model.DirectionType) error {
+	user := u.SelectByID(id)
+	if pkg.IsContainGoal(user.Direction, direction) {
+		user.Direction = pkg.RemoveGoal(user.Direction, direction)
+		return u.UpdateDirection(id, user.Direction)
+	} else {
+		return errors.New("不能删除用户没有的方向")
+	}
 }

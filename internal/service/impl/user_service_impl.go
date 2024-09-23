@@ -363,3 +363,44 @@ func (s UserServiceImpl) UpdateUserInfo(context *gin.Context) {
 	}
 	context.JSON(http.StatusOK, pkg.SuccessResponse(nil))
 }
+
+// DeleteUserDirection
+//
+//	@Description:  删除用户方向
+//	@receiver s
+//	@param context
+func (s UserServiceImpl) DeleteUserDirection(context *gin.Context) {
+	type deleteUserDirectionReq struct {
+		Direction int `json:"direction" form:"direction" binding:"required"`
+	}
+	var data deleteUserDirectionReq
+	if err := context.ShouldBind(&data); err != nil {
+		context.JSON(http.StatusBadRequest, pkg.FailedResponse(100, err.Error()))
+		return
+	}
+	claims, err := middleware.GetUserInfoByContext(context)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, pkg.FailedResponse(-1, err.Error()))
+	}
+	userRepo := repo.NewUserRepository()
+	user := userRepo.SelectByID(claims.ID)
+	if user == nil {
+		context.JSON(http.StatusBadRequest, pkg.FailedResponse(-1, "用户不存在"))
+		return
+	}
+	var direction model.DirectionType
+	if data.Direction == 1 {
+		direction = model.Postgraduate
+	} else if data.Direction == 2 {
+		direction = model.Employment
+	} else {
+		context.JSON(http.StatusBadRequest, pkg.FailedResponse(2, "未知的方向"))
+		return
+	}
+	err = userRepo.DeleteDirection(user.ID, direction)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, pkg.ErrorResponse(1, "删除失败", err))
+		return
+	}
+	context.JSON(http.StatusOK, pkg.SuccessResponse(nil))
+}

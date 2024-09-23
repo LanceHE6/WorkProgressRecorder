@@ -35,4 +35,7 @@ func UserRoute(group *gin.RouterGroup) {
 	userGroup.GET("/search", middleware.IsAdminMiddleware(), func(context *gin.Context) {
 		userService.SearchUsers(context)
 	})
+	userGroup.DELETE("/dire/del", middleware.AuthMiddleware(), func(context *gin.Context) {
+		userService.DeleteUserDirection(context)
+	})
 }

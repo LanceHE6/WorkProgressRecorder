@@ -17,6 +17,7 @@ type UserRepository interface {
 	UpdatePassword(id int64, newPsw string) error
 	SearchUsers(params pkg.SearchUsersParams) ([]model.User, int)
 	UpdateUserInfo(id int64, user model.User) error
+	DeleteDirection(id int64, direction model.DirectionType) error
 }
 
 // NewUserRepository

@@ -16,6 +16,7 @@ type UserService interface {
 	GetUserInfo(context *gin.Context)
 	SearchUsers(context *gin.Context)
 	UpdateUserInfo(context *gin.Context)
+	DeleteUserDirection(context *gin.Context)
 }
 
 // NewUserService
