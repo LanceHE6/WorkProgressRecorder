@@ -30,7 +30,7 @@
               size="small"
               style="margin-left: auto"
               icon="Edit"
-              @click="timelineModalVisible = true"
+              @click="openTimelineModal"
           >
             更新进度
           </n-button>
@@ -40,7 +40,7 @@
           <n-timeline>
             <n-timeline-item
                 v-for="item in timeline"
-                type="info"
+                :type="item.stage === 0 ? 'info' : (item.stage === 1 ? 'success' : 'error')"
                 :title="item.status"
                 :time="new Date(item.created_at).toLocaleString()"
             />
@@ -59,10 +59,21 @@
         aria-modal="true"
     >
       <n-form ref="timelineFormRef" :model="timelineForm" :rules="rules">
-        <n-form-item path="status" label="状态">
+        <n-form-item path="stage" label="状态">
+          <n-select
+              v-model:value="timelineForm.stage"
+              placeholder="请选择状态"
+              :options="[
+                  {label: '进行中', value: 0},
+                  {label: '成功', value: 1},
+                  {label: '失败', value: 2},
+              ]"
+          />
+        </n-form-item>
+        <n-form-item path="status" label="状态名">
           <n-input
               v-model:value="timelineForm.status"
-              placeholder="请输入状态"
+              placeholder="请输入状态名"
           />
         </n-form-item>
 
@@ -104,13 +115,14 @@ const timelineModalVisible = ref(false)
 
 const timelineForm = ref({
   id: '',
+  stage: 0,
   status: '',
-  create_time: Date.now(),
+  create_time: '',
 })
 
 const rules = {
   status: [
-    { required: true, message: '请输入状态', trigger: ['blur', 'input']},
+    { required: true, message: '请输入状态名', trigger: ['blur', 'input']},
   ]
 }
 
@@ -127,6 +139,11 @@ function refresh(){
   timeline.value = [...log.value.status_time_line].reverse()
 }
 
+
+function openTimelineModal(){
+  timelineForm.value.create_time = Date.now()
+  timelineModalVisible.value = true
+}
 const submitTimelineForm = async () => {
   if (!timelineFormRef) return
   await timelineFormRef.value?.validate(async (errors) => {
@@ -139,9 +156,10 @@ const submitTimelineForm = async () => {
       })
       if(result){
         if(result.data.code === 0){
-          message.success("密码修改成功")
+          message.success("进度更新成功")
           timelineModalVisible.value = false
           log.value.status_time_line.push({
+            stage: timelineForm.value.stage,
             status: timelineForm.value.status,
             created_at: timelineForm.value.create_time
           })
