@@ -33,3 +33,19 @@ func IsContainGoal(direction model.Direction, directionType model.DirectionType)
 	}
 	return false
 }
+
+// RemoveGoal
+//
+//	@Description: 从用户方向中移除方向
+//	@param direction []model.DirectionType 用户方向
+//	@param directionType model.DirectionType 要移除的方向
+//	@return model.Direction 移除后的用户方向
+func RemoveGoal(direction model.Direction, directionType model.DirectionType) model.Direction {
+	for i, item := range direction {
+		if item == directionType {
+			direction = append(direction[:i], direction[i+1:]...)
+			break
+		}
+	}
+	return direction
+}
