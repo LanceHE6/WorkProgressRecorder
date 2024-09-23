@@ -107,6 +107,20 @@ export const pNumValidatorNRequire = (rule, value, callback) => {
     }
 }
 
+//正数必填项约束
+export const pNumValidatorRequire = (rule, value, callback) => {
+    const valueNum = parseFloat(value)
+    if(!isNumeric(value) || isNaN(valueNum)){
+        callback(new Error('该项必须是正数'))
+    }
+    else if(valueNum < 0){
+        callback(new Error('该项必须是正数'))
+    }
+    else{
+        callback()
+    }
+}
+
 //字符串不相等约束
 export const strValidatorNEqual = (rule, value, callback, otherValue, errStr) => {
     if (value === '') {
