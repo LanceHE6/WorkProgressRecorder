@@ -61,6 +61,7 @@ func (w WorkLogServiceImpl) AddStatusTimeLine(context *gin.Context) {
 		ID         int64  `json:"id" form:"id" binding:"required"`
 		CreateTime int64  `json:"create_time" form:"create_time" binding:"required"`
 		Status     string `json:"status" form:"status" binding:"required"`
+		Stage      int    `json:"stage" form:"stage" binding:"required"`
 	}
 	var data AddStatusTimeLineReq
 	if err := context.ShouldBind(&data); err != nil {
@@ -71,6 +72,7 @@ func (w WorkLogServiceImpl) AddStatusTimeLine(context *gin.Context) {
 	statusTime := model.StatusTime{
 		CreatedAt: data.CreateTime,
 		Status:    data.Status,
+		Stage:     data.Stage,
 	}
 	workLogRepo := repo.NewWorkLogRepo()
 	err := workLogRepo.AddStatusTimeLine(data.ID, statusTime)
