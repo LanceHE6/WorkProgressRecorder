@@ -41,6 +41,34 @@
                 size="small"
                 style="margin-left: auto"
                 icon="Edit"
+                @click="openInfoForm"
+            >
+              编辑
+            </n-button>
+          </div>
+          <n-divider></n-divider>
+          <div
+              v-for="item in infoDataCol"
+          >
+          <span class="body-data">
+            <span class="data-label">{{item.label}}</span>
+            <span v-if="user && user[item.property]" class="data-prop">{{`${mapping(item, user[item.property])}${item.suffix ? item.suffix : ''}`}}</span>
+            <span v-else class="data-prop-null">未填写</span>
+          </span>
+          </div>
+        </n-card>
+      </n-row>
+
+      <n-row>
+        <n-card class="profile-body-card">
+          <div class="title-nickname">
+            <b>方向信息</b>
+            <n-button
+                text
+                type="primary"
+                size="small"
+                style="margin-left: auto"
+                icon="Edit"
                 @click="openDirectionForm"
             >
               编辑
@@ -48,12 +76,12 @@
           </div>
           <n-divider></n-divider>
           <div
-              v-for="item in dataCol"
+              v-for="item in directionDataCol"
           >
-          <span v-if="!item.direction || direction === item.direction" class="body-data">
+          <span v-if="direction.includes(item.direction)" class="body-data">
             <span class="data-label">{{item.label}}</span>
-            <span v-if="item.isUserProp && user && user[item.property]" class="data-prop">{{mapping(item, user[item.property])}}</span>
-            <span v-else-if="goal && goal[item.property]" class="data-prop">{{mapping(item, goal[item.property])}}</span>
+            <span v-if="item.direction === 1 && pg_goal && pg_goal[item.property]" class="data-prop">{{ `${mapping(item, pg_goal[item.property])}${item.suffix ? item.suffix : ''}` }}</span>
+            <span v-else-if="item.direction === 2 && empl_goal && empl_goal[item.property]" class="data-prop">{{ `${mapping(item, empl_goal[item.property])}${item.suffix ? item.suffix : ''}` }}</span>
             <span v-else class="data-prop-null">未填写</span>
           </span>
           </div>
@@ -70,7 +98,7 @@
         role="dialog"
         aria-modal="true"
     >
-      <n-form ref="formRef" :model="editForm" :rules="rules">
+      <n-form ref="editFormRef" :model="editForm" :rules="rules">
         <n-form-item path="old_password" label="旧密码">
           <n-input
               v-model:value="editForm.old_password"
@@ -110,12 +138,12 @@
   <n-modal v-model:show="directionFormVisible">
     <n-card
         style="width: 85%"
-        title="编辑"
+        title="编辑方向信息"
         :bordered="false"
         role="dialog"
         aria-modal="true"
     >
-      <n-form ref="DirectionRef" :model="directionForm" :rules="rules">
+      <n-form ref="directionRef" :model="directionForm" :rules="rules">
         <n-form-item path="direction" label="方向">
           <n-select
               v-model:value="directionForm.direction"
@@ -168,7 +196,7 @@
         </n-form-item>
         <n-form-item v-if="directionForm.direction === 2" path="target_salary" label="理想薪资">
           <n-input-number
-              v-model:value.number="directionForm.target_salary"
+              v-model:value="directionForm.target_salary"
               :show-button="false"
               placeholder="请输入理想薪资"
               style="width: 100%"
@@ -193,6 +221,36 @@
       </n-form>
     </n-card>
   </n-modal>
+  <n-modal v-model:show="infoFormVisible">
+    <n-card
+        style="width: 85%"
+        title="编辑个人资料"
+        :bordered="false"
+        role="dialog"
+        aria-modal="true"
+    >
+      <n-form ref="infoRef" :model="infoForm" :rules="rules">
+        <n-form-item path="class" label="班级">
+          <n-input
+              v-model:value="infoForm.class"
+              placeholder="请输入班级"
+          />
+        </n-form-item>
+        <n-form-item path="major" label="专业">
+          <n-input
+              v-model:value="infoForm.major"
+              placeholder="请输入专业"
+          />
+        </n-form-item>
+
+        <n-row style="justify-content: center">
+          <n-button type="primary" @click="submitInfoForm">
+            确定
+          </n-button>
+        </n-row>
+      </n-form>
+    </n-card>
+  </n-modal>
 </template>
 
 <script setup>
@@ -205,10 +263,9 @@ import {isSame, pIntValidatorRequire, pNumValidatorRequire} from "../utils/valid
 import {mapping} from "../utils/other.js";
 
 const message = useMessage()
-const formRef = ref(null)
-const DirectionRef = ref(null)
 const isLoading = ref(true)
 
+const editFormRef = ref(null)
 const editFormVisible = ref(false)
 const editForm = ref({
   old_password: '',
@@ -216,6 +273,7 @@ const editForm = ref({
   confirm: '',
 })
 
+const directionRef = ref(null)
 const directionFormVisible = ref(false)
 const directionForm = ref({
   direction: 1,
@@ -227,6 +285,13 @@ const directionForm = ref({
   target_job: '',
   target_salary: null,
   target_area: '',
+})
+
+const infoRef = ref(null)
+const infoFormVisible = ref(false)
+const infoForm = ref({
+  class: '',
+  major: '',
 })
 
 const rules = {
@@ -261,28 +326,41 @@ const rules = {
   target_area: [
     { required: true, message: '请输入目标地区', trigger: ['blur', 'input']},
   ],
+  class: [
+    { required: true, message: '请输入班级', trigger: ['blur', 'input']},
+  ],
+  major: [
+    { required: true, message: '请输入专业', trigger: ['blur', 'input']},
+  ],
 }
 
-const direction = ref(1)
-const goal = ref(null)
+const direction = ref([1])
+const pg_goal = ref(null)
+const empl_goal = ref(null)
 const user = CURRENT_USER
 
-//用户信息显示格式列表
-const dataCol = ref([
-  {property: "account", label: "账号", isUserProp: true},
-  {property: "direction", label: "方向", isUserProp: true, isMapping: true, mappingList:[
+//个人信息显示格式列表
+const infoDataCol = [
+  {property: "account", label: "账号"},
+  {property: "class", label: "班级"},
+  {property: "major", label: "专业"},
+  {property: "direction", label: "方向", isMappingList: true, mappingList:[
       {label: '未填写', value: 0},
       {label: '考研', value: 1},
       {label: '就业', value: 2},
     ]},
+]
+
+//方向信息显示格式列表
+const directionDataCol = [
   {property: "target_university", label: "目标院校", direction: 1},
   {property: "target_major", label: "目标专业", direction: 1},
   {property: "target_score", label: "目标分数", direction: 1},
   {property: "target_company", label: "目标公司", direction: 2},
   {property: "target_job", label: "目标岗位", direction: 2},
-  {property: "target_salary", label: "目标薪资", direction: 2},
+  {property: "target_salary", label: "期望薪资", direction: 2, suffix: 'k'},
   {property: "target_area", label: "目标地区", direction: 2}
-])
+]
 
 function back(){
   router.push("/")
@@ -293,27 +371,11 @@ onMounted(async () => {
 })
 
 const openEditForm = () => {
-  for(const i in editForm.value){
-    if(user.value[i]){
-      editForm.value[i] = user.value[i]
-    }
-  }
   editFormVisible.value = true
 }
-
-const openDirectionForm = () => {
-  directionForm.value.direction = direction.value
-  for(const i in directionForm.value){
-    if(goal.value && goal.value[i]){
-      directionForm.value[i] = goal.value[i]
-    }
-  }
-  directionFormVisible.value = true
-}
-
 const submitEditForm = async () => {
-  if (!formRef) return
-  await formRef.value?.validate(async (errors) => {
+  if (!editFormRef) return
+  await editFormRef.value?.validate(async (errors) => {
     if (!errors) {
       const result = await axiosPut({
         url:'/user/update/psw',
@@ -343,10 +405,22 @@ const submitEditForm = async () => {
   })
 }
 
+const openDirectionForm = () => {
+  directionForm.value.direction = direction.value[0]
+  for(const i in directionForm.value){
+    if(pg_goal.value && pg_goal.value[i]){
+      directionForm.value[i] = pg_goal.value[i]
+    }
+    else if(empl_goal.value && empl_goal.value[i]){
+      directionForm.value[i] = empl_goal.value[i]
+    }
+  }
+  directionFormVisible.value = true
+}
 const submitDirectionForm = async () => {
-  if (!DirectionRef) return
+  if (!directionRef) return
   console.log(directionForm.value)
-  await DirectionRef.value?.validate(async (errors) => {
+  await directionRef.value?.validate(async (errors) => {
     if (!errors) {
       let url = ''
       if(directionForm.value.direction === 1){
@@ -354,7 +428,7 @@ const submitDirectionForm = async () => {
       }
       else if(directionForm.value.direction === 2){
         url = '/emgl/add'
-        directionForm.value.target_salary = `${directionForm.value.target_salary}k`
+        directionForm.value.target_salary = directionForm.value.target_salary.toString()
       }
       else{
         message.error("方向类型错误：", directionForm.value.direction)
@@ -363,12 +437,46 @@ const submitDirectionForm = async () => {
       const result = await axiosPost({
         url: url,
         data: directionForm.value,
-        name: 'userCenter-direction'
+        name: 'userCenter-edit-direction'
       })
       if(result){
         if(result.data.code === 0){
           message.success("方向确定成功")
           directionFormVisible.value = false
+          await refresh()
+        }
+        else {
+          message.error("后端处理出错了")
+        }
+      }
+      else{
+        message.error("网络请求出错了")
+      }
+    }
+  })
+}
+
+const openInfoForm = () => {
+  for(const i in infoForm.value){
+    if(user.value && user.value[i]){
+      infoForm.value[i] = user.value[i]
+    }
+  }
+  infoFormVisible.value = true
+}
+const submitInfoForm = async () => {
+  if (!infoRef) return
+  await infoRef.value?.validate(async (errors) => {
+    if (!errors) {
+      const result = await axiosPut({
+        url: '/user/update/info',
+        data: infoForm.value,
+        name: 'userCenter-edit-info'
+      })
+      if(result){
+        if(result.data.code === 0){
+          message.success("编辑个人信息成功")
+          infoFormVisible.value = false
           await refresh()
         }
         else {
@@ -394,11 +502,12 @@ const refresh = async () => {
 
   const result2 = await axiosGet({
     url: '/user/target',
-    name: 'userCenter-get-goal'
+    name: 'userCenter-get-empl_goal'
   })
-  if(result2.data && result2.data.direction !== 0){
+  if(result2.data && result2.data.direction){
     direction.value = result2.data.direction
-    goal.value = result2.data.goal
+    empl_goal.value = result2.data.goal.empl_goal
+    pg_goal.value = result2.data.goal.pg_goal
   }
   else{
     message.warning("您还未确定方向！")
