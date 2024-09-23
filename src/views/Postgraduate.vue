@@ -91,10 +91,10 @@ function back(){
 onMounted(async () =>{
   const result = await axiosGet({
     url: '/user/target',
-    name: 'post-get-goal'
+    name: 'post-get-empl_goal'
   })
-  if(result && result.data && result.data.direction === 1){
-    goal.value = result.data.goal
+  if(result && result.data && result.data.direction.includes(1)){
+    goal.value = result.data.goal.pg_goal
   }
   else{
     message.warning("您没有确定考研目标")

@@ -21,7 +21,7 @@
       <n-card class="profile-body-card">
         <div class="title-main">
           <div class="small-text">{{`目标公司：${goal ? goal.target_company : ''}`}}</div>
-          <div class="small-text">{{`理想薪资：${goal ? goal.target_salary : ''}`}}</div>
+          <div class="small-text">{{`理想薪资：${goal ? goal.target_salary : ''}k`}}</div>
           <div class="small-text">{{`目标地区：${goal ? goal.target_area : ''}`}}</div>
         </div>
       </n-card>
@@ -210,10 +210,10 @@ const refresh = async () => {
 
   const result2 = await axiosGet({
     url: '/user/target',
-    name: 'occupation-get-goal'
+    name: 'occupation-get-empl_goal'
   })
-  if(result2.data && result2.data.direction === 2){
-    goal.value = result2.data.goal
+  if(result2.data && result2.data.direction.includes(2)){
+    goal.value = result2.data.goal.empl_goal
 
     const result3 = await axiosGet({
       url: '/wl/list',
