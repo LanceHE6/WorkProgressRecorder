@@ -11,6 +11,19 @@ export const mapping = (item, data) => {
             }
         }
     }
+    else if(item.isMappingList){
+        let result = ''
+        for(const i in data){
+            for(const j of item.mappingList){
+                const item2 = j
+                // 映射
+                if(data[i] === item2.value){
+                   result += `${item2.label}&`
+                }
+            }
+        }
+        return result.slice(0, -1)
+    }
     else{
         return data
     }
