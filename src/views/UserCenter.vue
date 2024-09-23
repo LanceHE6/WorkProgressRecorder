@@ -76,6 +76,7 @@
               v-model:value="editForm.old_password"
               type="password"
               placeholder="请输入旧密码"
+              show-password-on="click"
               @keydown.enter.prevent
           />
         </n-form-item>
@@ -84,6 +85,7 @@
               v-model:value="editForm.new_password"
               type="password"
               placeholder="请输入新密码"
+              show-password-on="click"
               @keydown.enter.prevent
           />
         </n-form-item>
@@ -92,6 +94,7 @@
               v-model:value="editForm.confirm"
               type="password"
               placeholder="请确认密码"
+              show-password-on="click"
               @keydown.enter.prevent
           />
         </n-form-item>
@@ -139,6 +142,7 @@
               v-model:value="directionForm.target_score"
               :show-button="false"
               placeholder="请输入目标分数"
+              style="width: 100%"
           />
         </n-form-item>
 
@@ -163,10 +167,16 @@
           />
         </n-form-item>
         <n-form-item v-if="directionForm.direction === 2" path="target_salary" label="理想薪资">
-          <n-input
+          <n-input-number
               v-model:value.number="directionForm.target_salary"
+              :show-button="false"
               placeholder="请输入理想薪资"
-          />
+              style="width: 100%"
+          >
+            <template #suffix>
+              千元
+            </template>
+          </n-input-number>
         </n-form-item>
         <n-form-item v-if="directionForm.direction === 2" path="target_area" label="目标地区">
           <n-input
@@ -191,7 +201,8 @@ import {onMounted, ref} from "vue";
 import {axiosGet, axiosPost, axiosPut} from "../utils/axiosUtil.js";
 import {CURRENT_USER, setUser} from "../utils/appManager.js";
 import {useMessage} from "naive-ui";
-import {isSame, pIntValidatorRequire} from "../utils/validator.js";
+import {isSame, pIntValidatorRequire, pNumValidatorRequire} from "../utils/validator.js";
+import {mapping} from "../utils/other.js";
 
 const message = useMessage()
 const formRef = ref(null)
@@ -214,7 +225,7 @@ const directionForm = ref({
   target_score: null,
   target_company: '',
   target_job: '',
-  target_salary: '',
+  target_salary: null,
   target_area: '',
 })
 
@@ -245,14 +256,14 @@ const rules = {
     { required: true, message: '请输入目标职位', trigger: ['blur', 'input']},
   ],
   target_salary: [
-    { required: true, message: '请输入期望薪资', trigger: ['blur', 'input']},
+    { validator: pNumValidatorRequire, trigger: 'blur' },
   ],
   target_area: [
     { required: true, message: '请输入目标地区', trigger: ['blur', 'input']},
   ],
 }
 
-const direction = ref(null)
+const direction = ref(1)
 const goal = ref(null)
 const user = CURRENT_USER
 
@@ -281,24 +292,6 @@ onMounted(async () => {
   await refresh()
 })
 
-const mapping = (item, data) => {
-  if(item.isDate){
-    return new Date(data).toLocaleString()
-  }
-  else if(item.isMapping){
-    for(const i of item.mappingList){
-      const item2 = i
-      // 映射
-      if(data === item2.value){
-        return item2.label
-      }
-    }
-  }
-  else{
-    return data
-  }
-}
-
 const openEditForm = () => {
   for(const i in editForm.value){
     if(user.value[i]){
@@ -311,7 +304,7 @@ const openEditForm = () => {
 const openDirectionForm = () => {
   directionForm.value.direction = direction.value
   for(const i in directionForm.value){
-    if(goal.value[i]){
+    if(goal.value && goal.value[i]){
       directionForm.value[i] = goal.value[i]
     }
   }
@@ -361,6 +354,7 @@ const submitDirectionForm = async () => {
       }
       else if(directionForm.value.direction === 2){
         url = '/emgl/add'
+        directionForm.value.target_salary = `${directionForm.value.target_salary}k`
       }
       else{
         message.error("方向类型错误：", directionForm.value.direction)
