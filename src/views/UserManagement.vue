@@ -26,8 +26,8 @@
                 v-model:value="userState.params.direction"
                 placeholder="按方向查询"
                 :options="[
-                    {label: '未选择', value: null},
-                    {label: '未确认', value: 0},
+                    {label: '清空', value: null},
+                    {label: '未填写', value: 0},
                     {label: '考研', value: 1},
                     {label: '就业', value: 2},
                 ]"
@@ -58,6 +58,15 @@
               striped
               style="font-size: 18px"
           />
+          <n-pagination
+              :display-order="['pages', 'quick-jumper']"
+              :item-count="userState.total"
+              :page-sizes="[10]"
+              :page-slot="5"
+              show-quick-jumper
+              style="margin-top: 10px"
+              :on-update-page="userPageChange"
+          />
         </n-tab-pane>
         <n-tab-pane name="checkin" tab="打卡记录">
           <n-row>
@@ -74,7 +83,7 @@
                 v-model:value="checkinState.params.time_slot"
                 placeholder="按时间段查询"
                 :options="[
-                    {label: '未选择', value: null},
+                    {label: '清空', value: null},
                     {label: '上午', value: '上午'},
                     {label: '下午', value: '下午'},
                     {label: '晚上', value: '晚上'},
@@ -99,6 +108,15 @@
               striped
               style="font-size: 18px"
           />
+          <n-pagination
+              :display-order="['pages', 'quick-jumper']"
+              :item-count="checkinState.total"
+              :page-sizes="[10]"
+              :page-slot="5"
+              show-quick-jumper
+              style="margin-top: 10px"
+              :on-update-page="checkinPageChange"
+          />
         </n-tab-pane>
       </n-tabs>
     </n-row>
@@ -113,7 +131,7 @@
         aria-modal="true"
     >
       <div
-        v-for="item in dataCol"
+        v-for="item in goalCol"
       >
           <span v-if="user.direction === item.direction" class="body-data">
             <span class="data-label">{{item.label}}</span>
@@ -124,10 +142,12 @@
       <div
         v-if="user.direction === 2"
       >
-        <span class="body-data">找工作日志</span>
+        <div class="title-nickname">
+          <b>找工作日志</b>
+        </div>
         <n-data-table
             :columns="logTableHeader"
-            :data="logs"
+            :data="logList"
             :bordered="false"
             style="font-size: 16px"
         />
@@ -160,6 +180,9 @@
         </n-upload-dragger>
       </n-upload>
       <n-row style="justify-content: center">
+        <n-text>
+          请使用样例模版导入，
+        </n-text>
         <n-button
             type="warning"
             size="large"
@@ -179,6 +202,39 @@
       </n-row>
     </n-card>
   </n-modal>
+  <n-modal v-model:show="showLogDetailModal">
+    <n-card
+        style="width: 80%"
+        title="日志详情"
+        :bordered="false"
+        role="dialog"
+        aria-modal="true"
+    >
+      <div
+          v-for="item in logDetailCol"
+      >
+          <span class="body-data">
+            <span class="data-label">{{item.label}}</span>
+            <span v-if="log && log[item.property]" class="data-prop">{{log[item.property]}}</span>
+            <span v-else class="data-prop-null">未填写</span>
+          </span>
+      </div>
+      <div class="title-nickname">
+        <b>进度</b>
+      </div>
+      <div class="title-time">
+        <n-empty v-if="timeline.length <= 0" description="无进度"/>
+        <n-timeline>
+          <n-timeline-item
+              v-for="item in timeline"
+              type="info"
+              :title="item.status"
+              :time="new Date(item.created_at).toLocaleString()"
+          />
+        </n-timeline>
+      </div>
+    </n-card>
+  </n-modal>
 </template>
 
 <script setup>
@@ -196,12 +252,15 @@ const myUpload = ref(null)
 
 const showGoalModal = ref(false)
 const showUploadModal = ref(false)
-const logs = ref([])
+const showLogDetailModal = ref(false)
+const logList = ref([])  //日志列表
+const log = ref({})  // 选中的日志
+const timeline = ref([])  // 选中日志的进度
 const goal = ref({})
 const user = ref({})
 
 //用户信息显示格式列表
-const dataCol = [
+const goalCol = [
   {property: "target_university", label: "目标院校", direction: 1},
   {property: "target_major", label: "目标专业", direction: 1},
   {property: "target_score", label: "目标分数", direction: 1},
@@ -209,6 +268,11 @@ const dataCol = [
   {property: "target_job", label: "目标岗位", direction: 2},
   {property: "target_salary", label: "目标薪资", direction: 2},
   {property: "target_area", label: "目标地区", direction: 2}
+]
+
+const logDetailCol = [
+  {property: "salary", label: "薪资"},
+  {property: "location", label: "地区"}
 ]
 
 const userState = reactive({
@@ -245,7 +309,7 @@ const userTableHeader = [
           return '就业'
         }
         default: {
-          return '未确认'
+          return '未填写'
         }
       }
     }
@@ -271,23 +335,23 @@ const userTableHeader = [
 const logTableHeader = [
   { title: "公司名称", key: "company_name"},
   { title: "工作岗位", key: "job"},
-  { title: "薪资", key: "salary"},
-  { title: "工作地区", key: "location"},
-  // { title: "操作", key: "actions",
-  //   render(row) {
-  //     return h(
-  //         NButton,
-  //         {
-  //           strong: true,
-  //           tertiary: true,
-  //           type: 'info',
-  //           size: "small",
-  //           onClick: () => showLogDetail(row)
-  //         },
-  //         { default: () => "详细信息" }
-  //     );
-  //   }
-  // }
+  // { title: "薪资", key: "salary"},
+  // { title: "工作地区", key: "location"},
+  { title: "操作", key: "actions",
+    render(row) {
+      return h(
+          NButton,
+          {
+            strong: true,
+            tertiary: true,
+            type: 'info',
+            size: "small",
+            onClick: () => showLogDetail(row)
+          },
+          { default: () => "详细信息" }
+      );
+    }
+  }
 ]
 
 const checkinTableHeader = [
@@ -310,8 +374,9 @@ const checkinTableHeader = [
 ]
 
 function showLogDetail(row){
-  localStorage.setItem("logDetail", JSON.stringify(row))
-  router.push("/logDetail")
+  log.value = row
+  timeline.value = row.status_time_line.reverse()
+  showLogDetailModal.value = true
 }
 
 const userList = ref([])
@@ -358,6 +423,8 @@ async function getUserList(){
     userList.value = result2.data.rows.map(item => item.user);
     //提取goal
     goalList.value = result2.data.rows.map(item => item.goal);
+
+    userState.total = result2.data.total
   }
   else{
     message.error("网络请求出错了")
@@ -372,6 +439,8 @@ async function getCheckinList(){
   })
   if(result3 && result3.data){
     checkinList.value = result3.data.rows
+
+    checkinState.total = result3.data.total
   }
   else{
     message.error("网络请求出错了")
@@ -391,7 +460,7 @@ async function showGoal(index){
       name: 'user-get-log'
     })
     if(result && result.data){
-      logs.value = result.data.work_logs
+      logList.value = result.data.work_logs
     }
     else{
       message.error("获取用户找工作日志失败，请稍后再试")
@@ -490,6 +559,16 @@ async function uploadUserList(userList){
   }
   await getUserList()
 }
+
+async function userPageChange(page){
+  userState.params.page = page
+  await getUserList()
+}
+
+async function checkinPageChange(page){
+  checkinState.params.page = page
+  await getCheckinList()
+}
 </script>
 
 <style scoped>
@@ -532,5 +611,16 @@ async function uploadUserList(userList){
 }
 .my-select :deep(.n-input__input-el){
   height: 40px;
+}
+.title-nickname{
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* 垂直居中 */
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+.title-time {
+  justify-content: flex-start;
+  text-align: start;
 }
 </style>

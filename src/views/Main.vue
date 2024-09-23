@@ -71,7 +71,7 @@
         <n-gi
           v-for="item in toolsList"
         >
-          <div v-if="item.permission <= state.user.permission">
+          <div v-if="item.permission === 0 || (item.permission <= state.user.permission)">
             <n-row style="justify-content: center;">
               <n-button class="main-btn" :color="item.color" @click="jumpTo(item.path)">
                 <template #icon>
@@ -228,9 +228,9 @@ function logout(){
 }
 
 const toolsList = [
-  {name: '考研打卡', path: '/postgraduate', color: '#2080f0', icon: GolfOutline, permission: 1},
-  {name: '找工作日志', path: '/occupation', color: '#8a2be2', icon: ReceiptOutline, permission: 1},
-  {name: '个人中心', path: '/userCenter', color: '#ff69b4', icon: PersonOutline, permission: 1},
+  {name: '考研打卡', path: '/postgraduate', color: '#2080f0', icon: GolfOutline, permission: 0},
+  {name: '找工作日志', path: '/occupation', color: '#8a2be2', icon: ReceiptOutline, permission: 0},
+  {name: '个人中心', path: '/userCenter', color: '#ff69b4', icon: PersonOutline, permission: 0},
   {name: '用户管理', path: '/userManagement', color: '#f0a020', icon: PersonOutline, permission: 2},
 ]
 </script>
