@@ -74,6 +74,8 @@ func (s UserServiceImpl) Import(context *gin.Context) {
 	type importRequest struct {
 		Account string `json:"account" form:"account" binding:"required"`
 		Name    string `json:"name" form:"name" binding:"required"`
+		Class   string `json:"class" form:"class" binding:"required"`
+		Major   string `json:"major" form:"major" binding:"required"`
 	}
 	type importUsersRequest struct {
 		List []importRequest `json:"list" form:"list" binding:"required"`
@@ -91,6 +93,8 @@ func (s UserServiceImpl) Import(context *gin.Context) {
 		var user model.User
 		user.Account = userInfo.Account
 		user.Name = userInfo.Name
+		user.Class = userInfo.Class
+		user.Major = userInfo.Major
 		users = append(users, user)
 	}
 	userRepo := repo.NewUserRepository()
