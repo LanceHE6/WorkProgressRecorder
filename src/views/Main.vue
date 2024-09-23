@@ -107,6 +107,7 @@
               v-model:value="state.loginForm.password"
               type="password"
               placeholder="请输入密码"
+              show-password-on="click"
               @keydown.enter.prevent
           />
         </n-form-item>
