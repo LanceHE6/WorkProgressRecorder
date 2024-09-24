@@ -75,12 +75,12 @@
             <n-row style="justify-content: center;">
               <n-button class="main-btn" :color="item.color" @click="jumpTo(item.path)">
                 <template #icon>
-                  <n-icon :component="item.icon" :size="20"></n-icon>
+                  <n-icon :component="item.icon" size="24px"></n-icon>
                 </template>
               </n-button>
             </n-row>
             <n-row style="justify-content: center;">
-              <n-text style="font-size: medium">
+              <n-text style="font-size: 15px">
                 {{item.name}}
               </n-text>
             </n-row>
@@ -262,7 +262,7 @@ const toolsList = [
 }
 
 .main-btn{
-  width: 60%;
+  width: 90%;
   height: auto;
   aspect-ratio: 15 / 8;
 }
