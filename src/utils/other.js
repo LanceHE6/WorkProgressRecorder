@@ -28,3 +28,23 @@ export const mapping = (item, data) => {
         return data
     }
 }
+
+export function mobileDeviceViewport(){
+    const meta = document.querySelector('meta[name="viewport"]');
+    if (meta) {
+        meta.content = 'width=device-width, initial-scale=1.0';
+    } else {
+        const newMeta = document.createElement('meta');
+        newMeta.name = 'viewport';
+        newMeta.content = 'width=device-width, initial-scale=1.0';
+        document.head.appendChild(newMeta);
+    }
+}
+
+export function screenDeviceViewport(){
+    const viewportMeta = document.querySelector('meta[name="viewport"]');
+    // 如果找到了，就移除它
+    if (viewportMeta) {
+        viewportMeta.parentNode.removeChild(viewportMeta);
+    }
+}
