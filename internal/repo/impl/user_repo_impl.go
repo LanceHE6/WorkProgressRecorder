@@ -6,6 +6,7 @@ import (
 	"WorkProgressRecord/pkg/db"
 	"errors"
 	"github.com/jinzhu/gorm"
+	"strconv"
 )
 
 // UserRepositoryImpl
@@ -116,7 +117,16 @@ func (u UserRepositoryImpl) SearchUsers(params pkg.SearchUsersParams) ([]model.U
 		)
 	}
 	if params.Direction != nil {
-		query = query.Where("direction = ?", *params.Direction)
+		// 未填写方向的
+		if *params.Direction == 0 {
+			query = query.Where("JSON_LENGTH(direction) = 0")
+		} else // 填写了两个方向的
+		if *params.Direction == 3 {
+			query = query.Where("JSON_CONTAINS(direction, '1') AND JSON_CONTAINS(direction, '2')")
+		} else {
+			// 查询单个方向的
+			query = query.Where("JSON_CONTAINS(direction, ?)", strconv.Itoa(*params.Direction))
+		}
 	}
 	// 统计总数
 	var count int
