@@ -3,7 +3,7 @@
     <n-row style="justify-content: left">
       <n-page-header subtitle="" @back="back">
         <template #title>
-          详细信息
+          进度信息
         </template>
       </n-page-header>
     </n-row>
@@ -13,10 +13,10 @@
           <b>日志信息</b>
         </div>
         <div class="title-main">
-          <div class="small-text">{{`公司名称：${log ? log.company_name : ''}`}}</div>
-          <div class="small-text">{{`岗位名称：${log ? log.job : ''}`}}</div>
-          <div class="small-text">{{`薪资：${log ? log.salary : ''}`}}</div>
-          <div class="small-text">{{`工作地区：${log ? log.location : ''}`}}</div>
+          <div class="small-text">{{`公司名称：${log ? log.company_name : '-'}`}}</div>
+          <div class="small-text">{{`岗位名称：${log ? log.job : '-'}`}}</div>
+          <div class="small-text">{{`薪资：${log ? log.salary : '-'}k`}}</div>
+          <div class="small-text">{{`工作地区：${log ? log.location : '-'}`}}</div>
         </div>
       </n-card>
     </n-row>
@@ -40,7 +40,7 @@
           <n-timeline>
             <n-timeline-item
                 v-for="item in timeline"
-                :type="item.stage === 0 ? 'info' : (item.stage === 1 ? 'success' : 'error')"
+                :type="item.stage === 1 ? 'info' : (item.stage === 2 ? 'success' : 'error')"
                 :title="item.status"
                 :time="new Date(item.created_at).toLocaleString()"
             />
@@ -64,9 +64,9 @@
               v-model:value="timelineForm.stage"
               placeholder="请选择状态"
               :options="[
-                  {label: '进行中', value: 0},
-                  {label: '成功', value: 1},
-                  {label: '失败', value: 2},
+                  {label: '进行中', value: 1},
+                  {label: '成功', value: 2},
+                  {label: '失败', value: 3},
               ]"
           />
         </n-form-item>
@@ -100,9 +100,8 @@
 <script setup>
 import {onMounted, ref} from "vue";
 import {router} from "../router/index.js";
-import {axiosGet, axiosPut} from "../utils/axiosUtil.js";
+import {axiosPut} from "../utils/axiosUtil.js";
 import {useMessage} from "naive-ui";
-import {setUser} from "../utils/appManager.js";
 
 const message = useMessage()
 
@@ -115,7 +114,7 @@ const timelineModalVisible = ref(false)
 
 const timelineForm = ref({
   id: '',
-  stage: 0,
+  stage: 1,
   status: '',
   create_time: '',
 })
