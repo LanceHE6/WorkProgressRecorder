@@ -76,6 +76,10 @@ const isCheck = ref(true)
 
 const place = ref(null)
 
+function back(){
+  router.push("/")
+}
+
 const options = [
   {label: '数字图书馆', value: '数字图书馆'},
   {label: '老图书馆', value: '老图书馆'},
@@ -83,10 +87,6 @@ const options = [
   {label: '实验楼', value: '实验楼'},
   {label: '信科楼', value: '信科楼'},
 ]
-
-function back(){
-  router.push("/")
-}
 
 onMounted(async () =>{
   const result = await axiosGet({
