@@ -53,6 +53,8 @@
           :columns="logHead"
           :data="logList"
           :bordered="false"
+          :scroll-x="1000"
+          max-height="40vh"
           style="width: 95%; height: 50vh; background-color: #f9f9f9c0;"
       />
     </n-row>
@@ -74,7 +76,11 @@
         <n-input v-model:value="logForm.job" @keydown.enter.prevent placeholder="请输入工作岗位"/>
       </n-form-item>
       <n-form-item path="salary" label="薪资">
-        <n-input v-model:value="logForm.salary" @keydown.enter.prevent placeholder="请输入薪资"/>
+        <n-input-number :show-button="false" v-model:value="logForm.salary" @keydown.enter.prevent placeholder="请输入薪资" style="width: 100%">
+          <template #suffix>
+            千元
+          </template>
+        </n-input-number>
       </n-form-item>
       <n-form-item path="location" label="工作地区">
         <n-input v-model:value="logForm.location" @keydown.enter.prevent placeholder="请输入工作地区"/>
@@ -100,6 +106,7 @@ import {h, onMounted, ref} from "vue";
 import {axiosGet, axiosPost} from "../utils/axiosUtil.js";
 import {NButton, useMessage} from "naive-ui";
 import {setUser} from "../utils/appManager.js";
+import {pNumValidatorRequire} from "../utils/validator.js";
 
 const message = useMessage()
 
@@ -119,7 +126,7 @@ const rules = {
     { required: true, message: '请输入工作岗位', trigger: ['blur', 'input']},
   ],
   salary:[
-    { required: true, message: '请输入薪资', trigger: ['blur', 'input']},
+    { validator: pNumValidatorRequire, trigger: 'blur' },
   ],
   location:[
     { required: true, message: '请输入工作地区', trigger: ['blur', 'input']},
@@ -137,11 +144,35 @@ const logForm = ref({
 const logHead = [
   { title: "公司名称", key: "company_name"},
   { title: "工作岗位", key: "job"},
-  { title: "薪资", key: "salary"},
+  { title: "薪资", key: "salary",
+    render(row) {
+      return `${row.salary}k`
+    }},
   { title: "工作地区", key: "location"},
   { title: "最新状态", key: "status",
     render(row) {
-      return row.status_time_line.length > 0 ? row.status_time_line[row.status_time_line.length - 1].status : '无'
+      let stage
+      if(row.status_time_line.length > 0){
+        const item = row.status_time_line[row.status_time_line.length - 1]
+        switch (item.stage){
+          case 1:{
+            stage = '进行中'
+            break
+          }
+          case 2:{
+            stage = '成功'
+            break
+          }
+          default:{
+            stage = '失败'
+            break
+          }
+        }
+        return `${item.status}（${stage}）`
+      }
+      else{
+        return '无'
+      }
     }
   },
   { title: "最新时间", key: "time",
@@ -149,7 +180,7 @@ const logHead = [
       return row.status_time_line.length > 0 ? new Date(row.status_time_line[row.status_time_line.length - 1].created_at).toLocaleString() : '无'
     }
   },
-  { title: "详情", key: "actions",
+  { title: "进度", key: "actions",
     render(row) {
       return h(
           NButton,
@@ -160,7 +191,7 @@ const logHead = [
             size: "small",
             onClick: () => showLogDetail(row)
           },
-          { default: () => "详细信息" }
+          { default: () => "点击查看" }
       );
     }
   }
@@ -186,6 +217,7 @@ const addLog = async () => {
   if (!logFormRef) return
   await logFormRef.value?.validate(async (errors) => {
     if (!errors) {
+      logForm.value.salary = logForm.value.salary.toString()
       const result = await axiosPost({
         url:'/wl/add',
         data: logForm.value,
