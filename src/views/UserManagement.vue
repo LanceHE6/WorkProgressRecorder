@@ -3,14 +3,14 @@
     <n-row style="justify-content: left">
       <n-page-header subtitle="" @back="back">
         <template #title>
-          用户管理
+          数据管理
         </template>
       </n-page-header>
     </n-row>
 
     <n-row>
       <n-tabs type="line" size="large" animated>
-        <n-tab-pane name="user" tab="用户列表">
+        <n-tab-pane name="user" tab="用户管理">
           <n-row>
             <n-input
                 v-model:value="userState.params.account"
@@ -30,6 +30,7 @@
                     {label: '未填写', value: 0},
                     {label: '考研', value: 1},
                     {label: '就业', value: 2},
+                    {label: '考研&就业', value: 3},
                 ]"
                 style="width: 15%; margin-right: 10px; text-align: start"
                 class="my-select"
@@ -63,14 +64,15 @@
               :columns="userTableHeader"
               :data="userList"
               :bordered="false"
+              :scroll-x="1200"
+              max-height="65vh"
               striped
-              :max-height="600"
               style="font-size: 18px"
           />
           <n-pagination
               :display-order="['pages', 'quick-jumper']"
               :item-count="userState.total"
-              :page-sizes="[10]"
+              :page-sizes="[pageSize]"
               :page-slot="5"
               show-quick-jumper
               style="margin-top: 10px"
@@ -114,14 +116,15 @@
               :columns="checkinTableHeader"
               :data="checkinList"
               :bordered="false"
-              :max-height="600"
+              :scroll-x="1200"
+              max-height="65vh"
               striped
               style="font-size: 18px"
           />
           <n-pagination
               :display-order="['pages', 'quick-jumper']"
               :item-count="checkinState.total"
-              :page-sizes="[10]"
+              :page-sizes="[pageSize]"
               :page-slot="5"
               show-quick-jumper
               style="margin-top: 10px"
@@ -135,7 +138,7 @@
   <n-modal v-model:show="showGoalModal">
     <n-card
         style="width: 85%"
-        title="方向信息"
+        title="目标信息"
         :bordered="false"
         role="dialog"
         aria-modal="true"
@@ -143,14 +146,14 @@
       <div
         v-for="item in goalCol"
       >
-          <span v-if="user.direction === item.direction" class="body-data">
+          <span v-if="user.direction.includes(item.direction)" class="body-data">
             <span class="data-label">{{item.label}}</span>
-            <span v-if="goal && goal[item.property]" class="data-prop">{{goal[item.property]}}</span>
+            <span v-if="goal && goal[item.property]" class="data-prop">{{`${goal[item.property]}${item.suffix ? item.suffix : ''}`}}</span>
             <span v-else class="data-prop-null">未填写</span>
           </span>
       </div>
       <div
-        v-if="user.direction === 2"
+        v-if="user.direction.includes(2)"
       >
         <div class="title-nickname">
           <b>找工作日志</b>
@@ -159,6 +162,8 @@
             :columns="logTableHeader"
             :data="logList"
             :bordered="false"
+            :scroll-x="1000"
+            max-height="40%"
             style="font-size: 16px"
         />
       </div>
@@ -215,20 +220,11 @@
   <n-modal v-model:show="showLogDetailModal">
     <n-card
         style="width: 80%"
-        title="日志详情"
+        title="进度详情"
         :bordered="false"
         role="dialog"
         aria-modal="true"
     >
-      <div
-          v-for="item in logDetailCol"
-      >
-          <span class="body-data">
-            <span class="data-label">{{item.label}}</span>
-            <span v-if="log && log[item.property]" class="data-prop">{{log[item.property]}}</span>
-            <span v-else class="data-prop-null">未填写</span>
-          </span>
-      </div>
       <div class="title-nickname">
         <b>进度</b>
       </div>
@@ -237,7 +233,7 @@
         <n-timeline>
           <n-timeline-item
               v-for="item in timeline"
-              type="info"
+              :type="item.stage === 1 ? 'info' : (item.stage === 2 ? 'success' : 'error')"
               :title="item.status"
               :time="new Date(item.created_at).toLocaleString()"
           />
@@ -278,13 +274,8 @@ const goalCol = [
   {property: "target_score", label: "目标分数", direction: 1},
   {property: "target_company", label: "目标公司", direction: 2},
   {property: "target_job", label: "目标岗位", direction: 2},
-  {property: "target_salary", label: "目标薪资", direction: 2},
+  {property: "target_salary", label: "目标薪资", direction: 2, suffix: 'k'},
   {property: "target_area", label: "目标地区", direction: 2}
-]
-
-const logDetailCol = [
-  {property: "salary", label: "薪资"},
-  {property: "location", label: "地区"}
 ]
 
 const userState = reactive({
@@ -306,6 +297,7 @@ const checkinState = reactive({
   total: 1
 })
 
+//用户导出excel表格式
 const userListDownloadTem = [
   {label: '学号', prop: 'account', listIndex: 1},
   {label: '班级', prop: 'class', listIndex: 1},
@@ -335,30 +327,35 @@ const userTableHeader = [
   {title: "序号", key: "number",
     render: (_, index) => {
       return `${index + 1}`;
-    }
+    },
+    width: '80',
+    fixed: "left"
   },
-  {title: "学号", key: "account"},
-  {title: '班级', key: 'class'},
-  {title: "姓名", key: "name"},
-  {title: '专业', key: 'major'},
-  {title: "方向", key: "direction",
-    sorter: (row1, row2) => row1.direction - row2.direction,
+  {title: "姓名", key: "name", fixed: "left", width: '80'},
+  {title: "学号", key: "account", width: '140'},
+  {title: '班级', key: 'class', width: '120'},
+  {title: '专业', key: 'major', width: '200'},
+  {title: "方向", key: "direction", width: '120',
     render(row) {
       const direction = row.direction
-      switch (direction){
-        case 1: {
-          return '考研'
+      if(!direction || direction.length === 0){
+        return '未填写'
+      }
+      else{
+        let result = ''
+        for(const item of direction){
+          if(item === 1){
+            result += '考研&'
+          }
+          else if(item === 2){
+            result += '就业&'
+          }
         }
-        case 2: {
-          return '就业'
-        }
-        default: {
-          return '未填写'
-        }
+        return result.slice(0, -1)
       }
     }
   },
-  {title: "目标信息", key: "goal",
+  {title: "目标", key: "goal", width: '80',
     render(_, index) {
       return h(
           NButton,
@@ -370,7 +367,7 @@ const userTableHeader = [
             size: "small",
             onClick: () => showGoal(index)
           },
-          { default: () => hasGoal(index) ? "查看目标" : "未填写" }
+          { default: () => hasGoal(index) ? "点击查看" : "未填写" }
       );
     }
   },
@@ -379,9 +376,19 @@ const userTableHeader = [
 const logTableHeader = [
   { title: "公司名称", key: "company_name"},
   { title: "工作岗位", key: "job"},
-  // { title: "薪资", key: "salary"},
-  // { title: "工作地区", key: "location"},
-  { title: "操作", key: "actions",
+  { title: "薪资", key: "salary"},
+  { title: "工作地区", key: "location"},
+  { title: "最新状态", key: "status",
+    render(row) {
+      return row.status_time_line.length > 0 ? row.status_time_line[row.status_time_line.length - 1].status : '无'
+    }
+  },
+  { title: "最新时间", key: "time",
+    render(row) {
+      return row.status_time_line.length > 0 ? new Date(row.status_time_line[row.status_time_line.length - 1].created_at).toLocaleString() : '无'
+    }
+  },
+  { title: "进度详情", key: "actions",
     render(row) {
       return h(
           NButton,
@@ -392,7 +399,7 @@ const logTableHeader = [
             size: "small",
             onClick: () => showLogDetail(row)
           },
-          { default: () => "详细信息" }
+          { default: () => "点击查看" }
       );
     }
   }
@@ -406,12 +413,12 @@ const checkinTableHeader = [
   },
   { title: "学号", key: "user",
     render(row) {
-      return row.user.account
+      return row.user ? row.user.account : '无'
     }
   },
   { title: "姓名", key: "user",
     render(row) {
-      return row.user.name
+      return row.user ? row.user.name : '无'
     }
   },
   { title: "打卡地点", key: "clock_in_location"},
@@ -424,7 +431,7 @@ const checkinTableHeader = [
 
 function showLogDetail(row){
   log.value = row
-  timeline.value = row.status_time_line.reverse()
+  timeline.value = [...row.status_time_line].reverse()
   showLogDetailModal.value = true
 }
 
@@ -472,7 +479,6 @@ async function getUserList(){
     userList.value = result2.data.rows.map(item => item.user);
     //提取goal
     goalList.value = result2.data.rows.map(item => item.goal);
-
     userState.total = result2.data.total
   }
   else{
@@ -497,10 +503,11 @@ async function getCheckinList(){
 }
 
 async function showGoal(index){
-  goal.value = goalList.value[index]
+  goal.value = {...goalList.value[index].empl_goal, ...goalList.value[index].pg_goal}
   user.value = userList.value[index]
+  console.log("test", goal.value)
 
-  if(user.value.direction === 2){
+  if(user.value.direction.includes(2)){
     const result = await axiosGet({
       url: '/wl/list',
       params: {
@@ -520,7 +527,7 @@ async function showGoal(index){
 }
 
 function hasGoal(index){
-  return goalList.value[index] !== null
+  return goalList.value[index].empl_goal !== null || goalList.value[index].pg_goal !== null
 }
 
 function uploadUser(){
@@ -559,7 +566,9 @@ function excelToJson(e){
         const data = exl[item]
         const user = {
           account: data.account.toString(),
-          name: data.name
+          name: data.name,
+          class: data.class,
+          major: data.major
         }
         //console.log("data:", data)
         dataList.push(user)
@@ -579,7 +588,9 @@ function downloadTemplate(){
   const workbook = XLSX.utils.book_new();
   const worksheet = XLSX.utils.json_to_sheet([{
     account: '',
-    name: ''
+    name: '',
+    class: '',
+    major: ''
   }])
   XLSX.utils.book_append_sheet(workbook, worksheet, "sheet1")
   worksheet["!cols"] = new Array(2).fill({ wch: 15 });
@@ -621,7 +632,9 @@ async function downloadUserList(){
     //提取user
     userList = result.data.rows.map(item => item.user);
     //提取goal
-    goalList = result.data.rows.map(item => item.goal);
+    goalList = result.data.rows.map(item => {
+      return {...item.goal.empl_goal, ...item.goal.pg_goal}
+    });
   }
   else{
     message.error("网络请求出错了")
@@ -633,7 +646,6 @@ async function downloadUserList(){
 
   const workbook = XLSX.utils.book_new();
   const worksheet = XLSX.utils.json_to_sheet(myList.listResult)
-  console.log("233", myList.listResult)
   XLSX.utils.book_append_sheet(workbook, worksheet, "sheet1")
   XLSX.utils.sheet_add_aoa(worksheet, [myList.listHeader], { origin: "A1" });
   worksheet["!cols"] = new Array(myList.listHeader.length).fill({ wch: 15 });
@@ -688,6 +700,7 @@ async function checkinPageChange(page){
   height: 100%;
   padding: 15px 10px 10px 10px;
   box-sizing: border-box;
+  overflow: auto;
 }
 .body-data{
   display: flex;
