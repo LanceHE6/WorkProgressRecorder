@@ -95,6 +95,7 @@ func (s UserServiceImpl) Import(context *gin.Context) {
 		user.Name = userInfo.Name
 		user.Class = userInfo.Class
 		user.Major = userInfo.Major
+		user.Direction = model.Direction{}
 		users = append(users, user)
 	}
 	userRepo := repo.NewUserRepository()
