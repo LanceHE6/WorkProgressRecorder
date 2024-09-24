@@ -11,7 +11,7 @@ const app = createApp(App)
 // axios.defaults.baseURL = 'http://26.107.171.13:8070'
 
 const ENV_SERVER_URL = import.meta.env.SERVER_URL;
-const SERVER_URL = 'https://cquptcooe.tech'
+const SERVER_URL = 'http://8.137.87.234:8000'
 axios.defaults.baseURL = ENV_SERVER_URL ? ENV_SERVER_URL : SERVER_URL
 
 app.provide("axios", axios)
