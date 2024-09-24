@@ -90,14 +90,14 @@
     </n-row>
   </div>
 
-  <n-modal v-model:show="state.showModal">
-    <n-card
-        style="width: 85%"
-        title="用户登录"
-        :bordered="false"
-        role="dialog"
-        aria-modal="true"
-    >
+  <n-modal
+      v-model:show="state.showModal"
+      preset="dialog"
+      title="用户登录"
+      positive-text="登录"
+      @positive-click="login"
+      :mask-closable="false"
+  >
       <n-form ref="formRef" :model="state.loginForm" :rules="state.rules">
         <n-form-item path="account" label="学号">
           <n-input v-model:value="state.loginForm.account" @keydown.enter.prevent placeholder="请输入10位学号"/>
@@ -117,13 +117,7 @@
             初始密码为学号后6位
           </n-gradient-text>
         </n-row>
-        <n-row style="justify-content: center">
-          <n-button type="primary" @click="login">
-            登录
-          </n-button>
-        </n-row>
       </n-form>
-    </n-card>
   </n-modal>
 </template>
 
@@ -236,6 +230,7 @@ const toolsList = [
   {name: '考研打卡', path: '/postgraduate', color: '#2080f0', icon: GolfOutline, permission: 0},
   {name: '找工作日志', path: '/occupation', color: '#8a2be2', icon: ReceiptOutline, permission: 0},
   {name: '个人中心', path: '/userCenter', color: '#ff69b4', icon: PersonOutline, permission: 0},
+ // {name: '找工作心得', path: '/experiment', color: '#f0a020', icon: PersonOutline, permission: 0},
   {name: '用户管理', path: '/userManagement', color: '#f0a020', icon: PersonOutline, permission: 2},
 ]
 </script>

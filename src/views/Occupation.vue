@@ -21,7 +21,7 @@
       <n-card class="profile-body-card">
         <div class="title-main">
           <div class="small-text">{{`目标公司：${goal ? goal.target_company : ''}`}}</div>
-          <div class="small-text">{{`理想薪资：${goal ? goal.target_salary : ''}k`}}</div>
+          <div class="small-text">{{`理想薪资：${goal ? `${goal.target_salary}k` : ''}`}}</div>
           <div class="small-text">{{`目标地区：${goal ? goal.target_area : ''}`}}</div>
         </div>
       </n-card>
@@ -31,20 +31,10 @@
           strong secondary
           type="warning"
           @click="showLogModal = true"
-          style="width: 40%; height: 80px; font-size: 18px"
+          style="width: 80%; height: 80px; font-size: 18px"
           :disabled="!goal"
       >
         新增工作日志
-      </n-button>
-
-      <n-button
-          strong secondary
-          type="warning"
-          @click="showExperienceModal = true"
-          style="width: 40%; height: 80px; font-size: 16px"
-          :disabled="!goal"
-      >
-        找工作心得/困难
       </n-button>
     </n-row>
 

@@ -380,7 +380,28 @@ const logTableHeader = [
   { title: "工作地区", key: "location"},
   { title: "最新状态", key: "status",
     render(row) {
-      return row.status_time_line.length > 0 ? row.status_time_line[row.status_time_line.length - 1].status : '无'
+      let stage
+      if(row.status_time_line.length > 0){
+        const item = row.status_time_line[row.status_time_line.length - 1]
+        switch (item.stage){
+          case 1:{
+            stage = '进行中'
+            break
+          }
+          case 2:{
+            stage = '成功'
+            break
+          }
+          default:{
+            stage = '失败'
+            break
+          }
+        }
+        return `${item.status}（${stage}）`
+      }
+      else{
+        return '无'
+      }
     }
   },
   { title: "最新时间", key: "time",
@@ -578,6 +599,7 @@ function excelToJson(e){
       await uploadUserList(dataList)
     } catch (error) {
       console.error("excelToJson:", error)
+      message.error("导入表格格式错误，建议使用样例模版进行导入")
       return false
     }
   }

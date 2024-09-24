@@ -504,7 +504,7 @@ const refresh = async () => {
     url: '/user/target',
     name: 'userCenter-get-empl_goal'
   })
-  if(result2.data && result2.data.direction){
+  if(result2.data && result2.data.direction && result2.data.direction.length > 0){
     direction.value = result2.data.direction
     empl_goal.value = result2.data.goal.empl_goal
     pg_goal.value = result2.data.goal.pg_goal

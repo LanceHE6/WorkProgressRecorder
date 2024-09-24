@@ -44,18 +44,27 @@
       v-model:show="showCheckInModal"
       preset="dialog"
       title="学习打卡"
-      positive-text="确认"
+      positive-text="打卡"
       negative-text="算了"
       @positive-click="checkIn">
-        <n-select
-            v-model:value="place"
-            :options="options"
-            placeholder="请选择打卡地点"
-            size="large"
-            style="width: 100%"
-            scrollable
-        >
-        </n-select>
+          <div>
+            <n-button
+                v-for="item in options"
+                @click="place = item.value"
+                type="success"
+                secondary
+                style="width: 45%; margin: 5px">
+              {{ item.label }}
+            </n-button>
+          </div>
+
+    <n-form-item path="place" label="打卡地点(选择后可以手动补充详细地点)">
+      <n-input
+          v-model:value="place"
+          placeholder="请选择或手动输入打卡地点"
+      />
+    </n-form-item>
+
   </n-modal>
 </template>
 
