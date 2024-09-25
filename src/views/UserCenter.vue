@@ -25,8 +25,8 @@
                 修改密码
               </n-button>
             </div>
-            <div class="small-text" style="margin-bottom: 10px">{{`用户ID：${user.id}`}}</div>
-            <div class="small-text">{{`创建时间：${new Date(user.created_at).toLocaleString()}`}}</div>
+            <div class="very-small-text" style="margin-bottom: 10px">{{`用户ID：${user.id}`}}</div>
+            <div class="very-small-text">{{`创建时间：${new Date(user.created_at).toLocaleString()}`}}</div>
           </div>
         </n-card>
       </n-row>

@@ -117,6 +117,15 @@ button:hover {
   text-align: center;
   font-size: 18px;
 }
+.small-text{
+  text-align: center;
+  font-size: 18px;
+}
+.very-small-text{
+  text-align: start;
+  font-size: 15px;
+  color: #8c939d;
+}
 .body-data{
   display: flex;
   margin: 20px 0 20px 10px;
