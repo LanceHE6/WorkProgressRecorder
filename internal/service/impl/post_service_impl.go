@@ -21,7 +21,7 @@ type PostServiceImpl struct {
 //	@param context *gin.Context
 func (p PostServiceImpl) AddPost(context *gin.Context) {
 	type addPostReq struct {
-		Tittle  string `json:"tittle" form:"tittle" binding:"required"`
+		Title   string `json:"title" form:"title" binding:"required"`
 		Content string `json:"content" form:"content" binding:"required"`
 	}
 	var data addPostReq
@@ -37,7 +37,7 @@ func (p PostServiceImpl) AddPost(context *gin.Context) {
 
 	post := model.Post{
 		UID:     userInfo.ID,
-		Tittle:  data.Tittle,
+		Title:   data.Title,
 		Content: data.Content,
 	}
 
