@@ -5,6 +5,7 @@ import Occupation from "../views/Occupation.vue";
 import UserCenter from "../views/UserCenter.vue";
 import LogDetail from "../views/LogDetail.vue";
 import UserManagement from "../views/UserManagement.vue";
+import Experiment from "../views/Experiment.vue";
 
 const routes = [
     { path: '/', component: Main , name: 'main', meta:{index:0},},
@@ -13,6 +14,7 @@ const routes = [
     { path: '/logDetail', component: LogDetail , name: 'logDetail', meta:{index:2},},
     { path: '/userCenter', component: UserCenter , name: 'userCenter', meta:{index:1},},
     { path: '/userManagement', component: UserManagement , name: 'userManagement', meta:{index:1},},
+    { path: '/experiment', component: Experiment , name: 'experiment', meta:{index:1},},
 ];
 
 const router = createRouter({
