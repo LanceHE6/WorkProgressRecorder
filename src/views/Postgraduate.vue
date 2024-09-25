@@ -38,7 +38,7 @@
         {{ isCheck ? '已打卡' : '学习打卡' }}
       </n-button>
     </n-row>
-    <n-row style="margin-top: 10px">
+    <n-row style="margin-top: 20px">
       <n-date-picker
           v-model:formatted-value="checkinListParams.date"
           value-format="yyyy-MM-dd"
