@@ -11,10 +11,10 @@ import (
 type Post struct {
 	Base
 	// 关联用户
-	User *User `gorm:"foreignKey:UID" json:"-"`
-	UID  int64 `gorm:"unique" json:"uid"`
+	User *User `gorm:"foreignKey:UID" json:"user"`
+	UID  int64 `json:"uid"`
 
-	Tittle   string      `gorm:"type:varchar(255);not null" json:"tittle"`
+	Title    string      `gorm:"type:varchar(255);not null" json:"title"`
 	Content  string      `gorm:"type:text;not null" json:"content"`
 	Comments CommentList `gorm:"type:json" json:"comments"`
 }
