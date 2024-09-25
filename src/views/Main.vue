@@ -184,6 +184,10 @@ function getCurrentDateFormatted() {
 }
 
 function jumpTo(path){
+  if(path === '/experiment'){
+    message.warning('下次更新绝对做出来QAQ，马上搞完了！！！')
+    return
+  }
   if(getUser() || path === '/experiment'){
     router.push(path)
   }
