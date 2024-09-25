@@ -167,3 +167,13 @@ button:hover {
   height: auto;
   aspect-ratio: 15 / 8;
 }
+.footer {
+  position: fixed;
+  bottom: 0;
+  right: 10px;
+  width: 100%;
+  text-align: end; /* 根据需要调整文本对齐方式 */
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.2); /* 根据需要设置背景色 */
+  padding: 10px 0; /* 根据需要设置内边距 */
+}

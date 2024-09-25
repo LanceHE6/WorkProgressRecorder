@@ -88,6 +88,9 @@
         </n-gi>
       </n-grid>
     </n-row>
+    <n-text class="footer">
+      {{`${FRONTEND_VERSION}_${BACKEND_VERSION}`}}
+    </n-text>
   </div>
 
   <n-modal
@@ -127,7 +130,7 @@ import {router} from "../router/index.js";
 import {onMounted, reactive, ref} from "vue";
 import { useMessage } from 'naive-ui'
 import {axiosGet, axiosPost} from "../utils/axiosUtil.js";
-import {CURRENT_USER, getUser, setUser} from "../utils/appManager.js";
+import {BACKEND_VERSION, CURRENT_USER, FRONTEND_VERSION, getUser, setUser} from "../utils/appManager.js";
 
 const message = useMessage();
 const formRef = ref(null)
@@ -165,6 +168,7 @@ onMounted( async () =>{
       localStorage.setItem("token", '')
     }
   }
+  await getBackendVersion()
 })
 
 function getCurrentDateFormatted() {
@@ -222,6 +226,19 @@ async function login(){
       }
     }
   })
+}
+
+async function getBackendVersion(){
+  const result = await axiosGet({
+    url: '/ping',
+    name: 'get-backend-version',
+  })
+  if(result && result.data){
+    BACKEND_VERSION.value = result.data.version
+  }
+  else{
+    console.error("获取后端版本失败")
+  }
 }
 
 function logout(){
