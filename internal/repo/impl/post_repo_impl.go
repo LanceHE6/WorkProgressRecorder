@@ -63,7 +63,7 @@ func (p PostRepoImpl) SelectByID(id int64) (*model.Post, error) {
 //	@return error 错误
 func (p PostRepoImpl) Search(params pkg.SearchPostsParams) ([]model.Post, int, error) {
 	var posts []model.Post
-	query := p.modelDB()
+	query := p.modelDB().Preload("User")
 	// 构建查询
 	if params.UID != nil {
 		query = query.Where("uid = ?", *params.UID)
