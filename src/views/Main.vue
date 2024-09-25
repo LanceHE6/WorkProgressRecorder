@@ -122,7 +122,7 @@
 </template>
 
 <script setup>
-import { CalendarOutline, AppsOutline, GolfOutline, ReceiptOutline, PersonOutline } from '@vicons/ionicons5'
+import { CalendarOutline, AppsOutline, GolfOutline, ReceiptOutline, PersonOutline, PeopleOutline, SettingsOutline } from '@vicons/ionicons5'
 import {router} from "../router/index.js";
 import {onMounted, reactive, ref} from "vue";
 import { useMessage } from 'naive-ui'
@@ -184,7 +184,7 @@ function getCurrentDateFormatted() {
 }
 
 function jumpTo(path){
-  if(getUser()){
+  if(getUser() || path === '/experiment'){
     router.push(path)
   }
   else{
@@ -230,8 +230,8 @@ const toolsList = [
   {name: '考研打卡', path: '/postgraduate', color: '#2080f0', icon: GolfOutline, permission: 0},
   {name: '找工作日志', path: '/occupation', color: '#8a2be2', icon: ReceiptOutline, permission: 0},
   {name: '个人中心', path: '/userCenter', color: '#ff69b4', icon: PersonOutline, permission: 0},
- // {name: '找工作心得', path: '/experiment', color: '#f0a020', icon: PersonOutline, permission: 0},
-  {name: '用户管理', path: '/userManagement', color: '#f0a020', icon: PersonOutline, permission: 2},
+  {name: '找工作心得', path: '/experiment', color: '#36ad6a', icon: PeopleOutline, permission: 0},
+  {name: '用户管理', path: '/userManagement', color: '#f0a020', icon: SettingsOutline, permission: 2},
 ]
 </script>
 
