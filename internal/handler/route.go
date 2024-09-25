@@ -22,4 +22,5 @@ func Route(gin *gin.Engine) {
 	group.PgCountDownRoute(apiV1)
 	group.WorkLogRoute(apiV1)
 	group.PostRoute(apiV1)
+	group.VersionRoute(apiV1)
 }
