@@ -45,7 +45,7 @@
           :bordered="false"
           :scroll-x="1000"
           max-height="40vh"
-          style="width: 95%; height: 50vh; background-color: #f9f9f9c0;"
+          style="width: 100%; height: 40vh; background-color: #f9f9f9c0;"
       />
     </n-row>
   </div>
@@ -265,15 +265,6 @@ const refresh = async () => {
 </script>
 
 <style scoped>
-.main-body{
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* 子元素在父容器中垂直分布 */
-  width: 100%;
-  height: 100%;
-  padding: 15px 10px 10px 10px;
-  box-sizing: border-box;
-}
 .profile-title-card{
   margin: 30px 0 0 0;
   width: 95%;
