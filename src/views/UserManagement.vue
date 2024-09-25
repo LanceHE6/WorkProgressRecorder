@@ -25,8 +25,8 @@
             <n-select
                 v-model:value="userState.params.direction"
                 placeholder="按方向查询"
+                clearable
                 :options="[
-                    {label: '清空', value: null},
                     {label: '未填写', value: 0},
                     {label: '考研', value: 1},
                     {label: '就业', value: 2},
@@ -93,8 +93,8 @@
             <n-select
                 v-model:value="checkinState.params.time_slot"
                 placeholder="按时间段查询"
+                clearable
                 :options="[
-                    {label: '清空', value: null},
                     {label: '上午', value: '上午'},
                     {label: '下午', value: '下午'},
                     {label: '晚上', value: '晚上'},
@@ -714,16 +714,6 @@ async function checkinPageChange(page){
 </script>
 
 <style scoped>
-.main-body{
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* 子元素在父容器中垂直分布 */
-  width: 100%;
-  height: 100%;
-  padding: 15px 10px 10px 10px;
-  box-sizing: border-box;
-  overflow: auto;
-}
 .body-data{
   display: flex;
   margin: 20px 0 20px 10px;
