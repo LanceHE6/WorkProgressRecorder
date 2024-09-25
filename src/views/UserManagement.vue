@@ -714,46 +714,5 @@ async function checkinPageChange(page){
 </script>
 
 <style scoped>
-.body-data{
-  display: flex;
-  margin: 20px 0 20px 10px;
-  justify-content: flex-start;
-}
-.body-data-span{
-  display: flex;
-  justify-content: flex-start;
-}
-.data-label{
-  display: flex;
-  align-items: center; /* 垂直居中 */
-  width: 100px;
-  font-size: 15px;
-}
-.data-prop{
-  display: flex;
-  align-items: center; /* 垂直居中 */
-  font-size: 15px;
-}
-.data-prop-null{
-  display: flex;
-  align-items: center; /* 垂直居中 */
-  color: #8c939d;
-}
-.my-select :deep(.n-base-selection-label) {
-  height: 40px;
-}
-.my-select :deep(.n-input__input-el){
-  height: 40px;
-}
-.title-nickname{
-  display: flex;
-  justify-content: space-between;
-  align-items: center; /* 垂直居中 */
-  font-size: 16px;
-  margin-bottom: 10px;
-}
-.title-time {
-  justify-content: flex-start;
-  text-align: start;
-}
+
 </style>

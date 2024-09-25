@@ -178,36 +178,5 @@ const submitTimelineForm = async () => {
 </script>
 
 <style scoped>
-.main-body{
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* 子元素在父容器中垂直分布 */
-  width: 100%;
-  height: 100%;
-  padding: 15px 10px 10px 10px;
-  box-sizing: border-box;
-}
-.profile-body-card{
-  margin: 10px 0 0 0;
-  width: 95%;
-}
-.title-main{
-  justify-content: center;
-  padding: 0 0 0 15px;
-}
-.small-text{
-  text-align: center;
-  font-size: 18px;
-}
-.title-nickname{
-  display: flex;
-  justify-content: space-between;
-  align-items: center; /* 垂直居中 */
-  font-size: 16px;
-  margin-bottom: 10px;
-}
-.title-time {
-  justify-content: flex-start;
-  text-align: start;
-}
+
 </style>

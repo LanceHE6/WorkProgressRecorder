@@ -265,20 +265,5 @@ async function checkinPageChange(page){
 </script>
 
 <style scoped>
-.profile-title-card{
-  margin: 30px 0 0 0;
-  width: 95%;
-}
-.profile-body-card{
-  margin: 10px 0 0 0;
-  width: 95%;
-}
-.title-main{
-  justify-content: center;
-  padding: 0 0 0 15px;
-}
-.small-text{
-  text-align: center;
-  font-size: 18px;
-}
+
 </style>

@@ -236,29 +236,5 @@ const toolsList = [
 </script>
 
 <style scoped>
-.main-body{
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* 子元素在父容器中垂直分布 */
-  width: 100%;
-  height: 100%;
-  padding: 15px 10px 10px 10px;
-  box-sizing: border-box;
-}
 
-.main-body .n-row{
-  padding: 0;
-}
-
-.carousel-img{
-  width: 100%;   /*增加宽度，加了固定定位的盒子必须要有宽度*/
-  height: auto;
-  max-height: 65vh;
-}
-
-.main-btn{
-  width: 90%;
-  height: auto;
-  aspect-ratio: 15 / 8;
-}
 </style>
