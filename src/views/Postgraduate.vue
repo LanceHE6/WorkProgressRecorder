@@ -127,7 +127,7 @@ import {NButton, useMessage} from "naive-ui";
 import {getUser} from "../utils/appManager.js";
 
 const message = useMessage()
-const pageSize = 10
+const pageSize = 5
 
 const examDay = ref(null)
 const goal = ref(null)
