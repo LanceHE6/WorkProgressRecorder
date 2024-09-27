@@ -21,8 +21,9 @@ type PostServiceImpl struct {
 //	@param context *gin.Context
 func (p PostServiceImpl) AddPost(context *gin.Context) {
 	type addPostReq struct {
-		Title   string `json:"title" form:"title" binding:"required"`
-		Content string `json:"content" form:"content" binding:"required"`
+		Title     string `json:"title" form:"title" binding:"required"`
+		Content   string `json:"content" form:"content" binding:"required"`
+		Anonymous bool   `json:"anonymous" form:"anonymous" binding:"required"`
 	}
 	var data addPostReq
 	if err := context.ShouldBind(&data); err != nil {
@@ -36,9 +37,10 @@ func (p PostServiceImpl) AddPost(context *gin.Context) {
 	}
 
 	post := model.Post{
-		UID:     userInfo.ID,
-		Title:   data.Title,
-		Content: data.Content,
+		UID:       userInfo.ID,
+		Title:     data.Title,
+		Content:   data.Content,
+		Anonymous: data.Anonymous,
 	}
 
 	postRepo := repo.NewPostRepo()
