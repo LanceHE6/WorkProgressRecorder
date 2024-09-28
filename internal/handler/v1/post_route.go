@@ -1,4 +1,4 @@
-package group
+package v1
 
 import (
 	"WorkProgressRecord/internal/middleware"
@@ -6,6 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// PostRoute
+//
+//	@Description: 帖子路由
+//	@param group *gin.RouterGroup
 func PostRoute(group *gin.RouterGroup) {
 	postService := service.NewPostService()
 

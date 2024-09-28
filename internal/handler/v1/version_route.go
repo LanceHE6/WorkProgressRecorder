@@ -1,10 +1,14 @@
-package group
+package v1
 
 import (
 	"WorkProgressRecord/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
+// VersionRoute
+//
+//	@Description: 版本路由
+//	@param group *gin.RouterGroup
 func VersionRoute(group *gin.RouterGroup) {
 	versionService := service.NewVersionService()
 

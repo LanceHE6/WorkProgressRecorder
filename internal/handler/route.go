@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"WorkProgressRecord/internal/handler/group"
+	"WorkProgressRecord/internal/handler/v1"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,12 +15,12 @@ func Route(gin *gin.Engine) {
 
 	// 用户路由组
 
-	group.UserRoute(apiV1)
-	group.EmplGoalRoute(apiV1)
-	group.PGGoalRoute(apiV1)
-	group.ClockInRoute(apiV1)
-	group.PgCountDownRoute(apiV1)
-	group.WorkLogRoute(apiV1)
-	group.PostRoute(apiV1)
-	group.VersionRoute(apiV1)
+	v1.UserRoute(apiV1)
+	v1.EmplGoalRoute(apiV1)
+	v1.PGGoalRoute(apiV1)
+	v1.ClockInRoute(apiV1)
+	v1.PgCountDownRoute(apiV1)
+	v1.WorkLogRoute(apiV1)
+	v1.PostRoute(apiV1)
+	v1.VersionRoute(apiV1)
 }

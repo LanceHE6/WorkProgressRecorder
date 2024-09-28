@@ -1,4 +1,4 @@
-package group
+package v1
 
 import (
 	"WorkProgressRecord/internal/middleware"
@@ -6,6 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// WorkLogRoute
+//
+//	@Description: 工作日志路由
+//	@param group *gin.RouterGroup
 func WorkLogRoute(group *gin.RouterGroup) {
 	workLogService := service.NewWorkLogService()
 
