@@ -23,19 +23,21 @@ func init() {
 	if err := v.ReadInConfig(); err != nil {
 		// 如果配置文件不存在，警告用户并使用默认值
 		fmt.Println("Using default config settings...")
-		v.SetDefault("server.port", "8080")
-		v.SetDefault("server.mode", "debug")
-		v.SetDefault("server.log.path", "logs")
-		v.SetDefault("server.log.max_files", 15)
-		v.SetDefault("server.secretKey", "work_progress_recorder_secret_key")
 
-		v.SetDefault("db.mysql.host", "localhost")
-		v.SetDefault("db.mysql.port", "3306")
-		v.SetDefault("db.mysql.account", "root")
-		v.SetDefault("db.mysql.password", "password")
-		v.SetDefault("db.mysql.dbname", "wpr")
+		v.SetDefault("server.port", "8080")                                   // 服务器端口
+		v.SetDefault("server.mode", "debug")                                  // 服务器日志模式
+		v.SetDefault("server.log.path", "logs")                               // 服务器日志路径
+		v.SetDefault("server.log.max_files", 15)                              // 服务器日志文件最大数量
+		v.SetDefault("server.secretKey", "work_progress_recorder_secret_key") // 服务器密钥
 
-		v.SetDefault("pgee.pgee_time", "2024-12-21")
+		v.SetDefault("db.mysql.host", "localhost")    // mysql数据库地址
+		v.SetDefault("db.mysql.port", "3306")         // mysql数据库端口
+		v.SetDefault("db.mysql.account", "root")      // mysql数据库账号
+		v.SetDefault("db.mysql.password", "password") // mysql数据库密码
+		v.SetDefault("db.mysql.dbname", "wpr")        // mysql数据库名称
+
+		v.SetDefault("pgee.pgee_time", "2024-12-21") // pgee时间
+		v.SetDefault("export.path", "/export")       // 导出文件路径
 
 		// 选择在此处写入默认配置文件或者不写
 		err := v.WriteConfigAs("config.yaml")
@@ -133,5 +135,13 @@ func GetDBMySQLHost() string {
 		return envValue
 	} else {
 		return v.GetString("db.mysql.host")
+	}
+}
+func GetExportPath() string {
+	envValue := os.Getenv("EXPORT_PATH")
+	if envValue != "" {
+		return envValue
+	} else {
+		return v.GetString("export.path")
 	}
 }

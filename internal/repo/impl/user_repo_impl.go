@@ -55,6 +55,17 @@ func (u UserRepositoryImpl) SelectByAccountAndPsw(account, password string) *mod
 	return &user
 }
 
+// SelectAll
+//
+//	@Description: 获取所有用户
+//	@receiver u UserRepositoryImpl
+//	@return []model.User 用户列表
+func (u UserRepositoryImpl) SelectAll() []model.User {
+	var users []model.User
+	u.modelDB().Find(&users)
+	return users
+}
+
 // Insert
 //
 //	@Description: 插入用户

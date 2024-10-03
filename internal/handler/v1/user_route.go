@@ -38,4 +38,7 @@ func UserRoute(group *gin.RouterGroup) {
 	userGroup.DELETE("/dire/del", middleware.AuthMiddleware(), func(context *gin.Context) {
 		userService.DeleteUserDirection(context)
 	})
+	userGroup.GET("/export", middleware.IsAdminMiddleware(), func(context *gin.Context) {
+		userService.ExportUserInfo2Excel(context)
+	})
 }

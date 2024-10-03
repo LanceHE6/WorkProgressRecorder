@@ -5,9 +5,12 @@ import (
 	"WorkProgressRecord/internal/model"
 	"WorkProgressRecord/internal/repo"
 	"WorkProgressRecord/pkg"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/xuri/excelize/v2"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 // UserServiceImpl
@@ -404,4 +407,114 @@ func (s UserServiceImpl) DeleteUserDirection(context *gin.Context) {
 		return
 	}
 	context.JSON(http.StatusOK, pkg.SuccessResponse(nil))
+}
+
+// ExportUserInfo2Excel
+//
+//	@Description: 将用户信息导出为excel文件
+//	@receiver s UserServiceImpl
+//	@param context *gin.Context
+func (s UserServiceImpl) ExportUserInfo2Excel(context *gin.Context) {
+	userRepo := repo.NewUserRepository()
+	pgGoalRepo := repo.NewPGGoalRepo()
+	emplGoalRepo := repo.NewEmplGoalRepo()
+	users := userRepo.SelectAll()
+
+	// 表数据
+	data := make([][]string, 0)
+
+	for _, user := range users {
+		// 构造用户数据
+		userInfo := make([]string, 13)
+		userInfo[0] = user.Account
+		userInfo[1] = user.Class
+		userInfo[2] = user.Name
+		userInfo[3] = user.Major
+		// 构造用户方向信息
+		isPg := pkg.IsContainGoal(user.Direction, model.Postgraduate)
+		isEmpl := pkg.IsContainGoal(user.Direction, model.Employment)
+		if isPg && isEmpl {
+			userInfo[4] = "考研&就业"
+		} else if isEmpl {
+			userInfo[4] = "就业"
+		} else if isPg {
+			userInfo[4] = "考研"
+		} else {
+			userInfo[4] = "未确定"
+		}
+		if isPg {
+			pgGoal, err := pgGoalRepo.SelectByUID(user.ID)
+			if err != nil {
+				userInfo[5] = err.Error()
+				userInfo[6] = err.Error()
+				userInfo[7] = err.Error()
+			} else {
+				userInfo[5] = pgGoal.TargetUniversity
+				userInfo[6] = pgGoal.TargetMajor
+				userInfo[7] = strconv.FormatFloat(pgGoal.TargetScore, 'E', -1, 64)
+			}
+		} else {
+			userInfo[5] = ""
+			userInfo[6] = ""
+			userInfo[7] = ""
+		}
+		if isEmpl {
+			emplGoal, err := emplGoalRepo.SelectByUID(user.ID)
+			if err != nil {
+				userInfo[8] = err.Error()
+				userInfo[9] = err.Error()
+				userInfo[10] = err.Error()
+				userInfo[11] = err.Error()
+				userInfo[12] = err.Error()
+			} else {
+				if emplGoal.Status == 1 {
+					userInfo[8] = "未拿到offer"
+				} else {
+					userInfo[8] = "已拿到offer"
+				}
+				userInfo[9] = emplGoal.TargetCompany
+				userInfo[10] = emplGoal.TargetJob
+				userInfo[11] = emplGoal.TargetSalary
+				userInfo[12] = emplGoal.TargetArea
+			}
+		} else {
+			userInfo[8] = ""
+			userInfo[9] = ""
+			userInfo[10] = ""
+			userInfo[11] = ""
+			userInfo[12] = ""
+		}
+		data = append(data, userInfo)
+	}
+	// 创建新的excel文件
+	excel := excelize.NewFile()
+	// 设置列宽
+	_ = excel.SetColWidth("Sheet1", "A", "M", 20)
+	// 设置表头
+	titleList := []string{"学号", "班级", "姓名", "专业", "方向", "目标院校", "目标专业", "目标分数", "找工作状态", "目标公司", "目标职位", "理想薪资", "目标地区"}
+	_ = excel.SetSheetRow("Sheet1", "A1", &titleList)
+	// 循环遍历写入数据
+	for i, row := range data {
+		rowNum := fmt.Sprintf("A%d", i+2)
+		_ = excel.SetSheetRow("Sheet1", rowNum, &row)
+	}
+	// 命名
+	fileName := "eui" + strconv.FormatInt(time.Now().Unix(), 10) + ".xlsx"
+	path := pkg.GetFullExportPath(fileName)
+	err := excel.SaveAs(path)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, pkg.ErrorResponse(1, "导出文件失败", err))
+		return
+	}
+	// 设置响应头部
+	context.Header("Content-Type", "application/octet-stream")
+	context.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", fileName))
+	err = excel.Write(context.Writer)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, pkg.ErrorResponse(2, "导出文件失败", err))
+	}
+	//context.JSON(http.StatusOK, pkg.SuccessResponse(map[string]any{
+	//	"fileName": fileName,
+	//	"path":     path,
+	//}))
 }

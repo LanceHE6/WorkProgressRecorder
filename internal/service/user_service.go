@@ -17,6 +17,7 @@ type UserService interface {
 	SearchUsers(context *gin.Context)
 	UpdateUserInfo(context *gin.Context)
 	DeleteUserDirection(context *gin.Context)
+	ExportUserInfo2Excel(context *gin.Context)
 }
 
 // NewUserService

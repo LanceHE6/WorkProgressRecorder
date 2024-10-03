@@ -10,6 +10,7 @@ import (
 // @Description: 用户仓库接口
 type UserRepository interface {
 	SelectByID(id int64) *model.User
+	SelectAll() []model.User
 	SelectByAccountAndPsw(account, password string) *model.User
 	Insert(user model.User) error
 	UpdateSessionID(id int64, sessionID string) error
