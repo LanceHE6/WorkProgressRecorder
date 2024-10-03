@@ -451,7 +451,7 @@ func (s UserServiceImpl) ExportUserInfo2Excel(context *gin.Context) {
 			} else {
 				userInfo[5] = pgGoal.TargetUniversity
 				userInfo[6] = pgGoal.TargetMajor
-				userInfo[7] = strconv.FormatFloat(pgGoal.TargetScore, 'E', -1, 64)
+				userInfo[7] = strconv.FormatFloat(pgGoal.TargetScore, 'f', -1, 64)
 			}
 		} else {
 			userInfo[5] = ""
@@ -491,7 +491,7 @@ func (s UserServiceImpl) ExportUserInfo2Excel(context *gin.Context) {
 	// 设置列宽
 	_ = excel.SetColWidth("Sheet1", "A", "M", 20)
 	// 设置表头
-	titleList := []string{"学号", "班级", "姓名", "专业", "方向", "目标院校", "目标专业", "目标分数", "找工作状态", "目标公司", "目标职位", "理想薪资", "目标地区"}
+	titleList := []string{"学号", "班级", "姓名", "专业", "方向", "目标院校", "目标专业", "目标分数", "找工作状态", "目标公司", "目标职位", "理想薪资(k)", "目标地区"}
 	_ = excel.SetSheetRow("Sheet1", "A1", &titleList)
 	// 循环遍历写入数据
 	for i, row := range data {
