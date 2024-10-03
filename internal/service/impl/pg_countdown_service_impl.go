@@ -22,7 +22,7 @@ type PgCountdownServiceImpl struct {
 //	@return error 错误信息
 func (PgCountdownServiceImpl) GetPgCountdown(context *gin.Context) {
 	// 解析考研的日期字符串
-	t, err := time.Parse("2006-01-02", config.ServerConfig.PGEE.PGEE_TIME)
+	t, err := time.Parse("2006-01-02", config.GetPgeeTime())
 	if err != nil {
 		context.JSON(http.StatusOK, pkg.ErrorResponse(1, "解析考研日期失败", err))
 		return

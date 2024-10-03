@@ -18,28 +18,11 @@ var db *gorm.DB
 //	@Description: 初始化数据库连接
 func init() {
 	var err error
-
-	// 从环境变量获取配置
-	account := os.Getenv("MYSQL_ACCOUNT")
-	if account == "" {
-		account = config.ServerConfig.DB.MYSQL.ACCOUNT
-	}
-	password := os.Getenv("MYSQL_PASSWORD")
-	if password == "" {
-		password = config.ServerConfig.DB.MYSQL.PASSWORD
-	}
-	host := os.Getenv("MYSQL_HOST")
-	if host == "" {
-		host = config.ServerConfig.DB.MYSQL.HOST
-	}
-	port := os.Getenv("MYSQL_PORT")
-	if port == "" {
-		port = config.ServerConfig.DB.MYSQL.PORT
-	}
-	dbname := os.Getenv("MYSQL_DBNAME")
-	if dbname == "" {
-		dbname = config.ServerConfig.DB.MYSQL.DBNAME
-	}
+	account := config.GetDBMySQLAccount()
+	password := config.GetDBMySQLPassword()
+	host := config.GetDBMySQLHost()
+	port := config.GetDBMySQLPort()
+	dbname := config.GetDBMySQLDBName()
 
 	// 创建MySQL连接字符串
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/?charset=utf8&parseTime=True&loc=Local",
@@ -52,22 +35,22 @@ func init() {
 	// 连接到MySQL
 	tdb, err := sql.Open("mysql", dsn)
 	if err != nil {
-		_ = fmt.Errorf("can not connect to database")
+		fmt.Println("can not connect to database: " + err.Error())
 		os.Exit(-1)
 		return
 	}
 
 	// 创建数据库
-	_, err = tdb.Exec("CREATE DATABASE IF NOT EXISTS " + config.ServerConfig.DB.MYSQL.DBNAME)
+	_, err = tdb.Exec("CREATE DATABASE IF NOT EXISTS " + dbname)
 	if err != nil {
-		_ = fmt.Errorf("can not create database")
+		fmt.Println("can not create database: " + err.Error())
 		os.Exit(-2)
 		return
 	}
 	// 关闭数据库连接
 	err = tdb.Close()
 	if err != nil {
-		_ = fmt.Errorf("can not close the database")
+		fmt.Println("can not close database: " + err.Error())
 		os.Exit(-3)
 		return
 	}

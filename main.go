@@ -17,7 +17,7 @@ func main() {
 	// 加载路由
 	handler.Route(ginServer)
 
-	err := ginServer.Run(":" + config.ServerConfig.SERVER.PORT)
+	err := ginServer.Run(":" + config.GetServerPort())
 	if err != nil {
 		return
 	}
