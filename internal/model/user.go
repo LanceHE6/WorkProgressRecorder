@@ -17,7 +17,7 @@ type User struct {
 	Class      string    `gorm:"column:class;type:varchar(255);" json:"class"`                    // 班级
 	Major      string    `gorm:"column:major;type:varchar(255);" json:"major"`                    // 专业
 	Permission int       `gorm:"column:permission;type:int;not null" json:"permission"`           // 权限
-	Direction  Direction `gorm:"column:direction;type:json;" json:"direction"`                    // 方向1:考研 2:就业 3:既考研又就业
+	Direction  Direction `gorm:"column:direction;type:json;" json:"direction"`                    // 数组json对象,方向1:考研 2:就业
 	SessionID  string    `gorm:"column:session_id;type:varchar(255)" json:"-"`                    // session_id
 }
 
