@@ -58,24 +58,32 @@ func (p PostServiceImpl) AddPost(context *gin.Context) {
 //	@param context *gin.Context
 func (p PostServiceImpl) AddComment(context *gin.Context) {
 	type addCommentReq struct {
-		ID      int64  `json:"id" form:"id" binding:"required"`
-		Content string `json:"content" form:"content" binding:"required"`
+		ID        int64  `json:"id" form:"id" binding:"required"`
+		Content   string `json:"content" form:"content" binding:"required"`
+		Anonymous bool   `json:"anonymous" form:"anonymous" binding:"required"`
 	}
 	var data addCommentReq
 	if err := context.ShouldBind(&data); err != nil {
 		context.JSON(http.StatusBadRequest, pkg.FailedResponse(100, err.Error()))
 		return
 	}
-
+	userRepo := repo.NewUserRepository()
 	userInfo, err := middleware.GetUserInfoByContext(context)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, pkg.ErrorResponse(-1, "无法获取用户id", err))
 	}
 
+	// 获取评论用户实列
+	user := userRepo.SelectByID(userInfo.ID)
+	if user == nil {
+		context.JSON(http.StatusBadRequest, pkg.ErrorResponse(-2, "用户不存在", err))
+		return
+	}
 	comment := model.Comment{
-		UID:       userInfo.ID,
+		User:      *user,
 		Content:   data.Content,
-		CreatedAt: time.Now().Unix(),
+		CreatedAt: time.Now(),
+		Anonymous: data.Anonymous,
 	}
 
 	postRepo := repo.NewPostRepo()

@@ -4,6 +4,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
+	"time"
 )
 
 // Post
@@ -23,9 +24,10 @@ type Post struct {
 type CommentList []Comment
 
 type Comment struct {
-	UID       int64  `json:"uid"`        // 状态
-	CreatedAt int64  `json:"created_at"` // 创建时间
-	Content   string `json:"content"`    // 内容
+	User      User      `json:"user"`       // 评论用户
+	CreatedAt time.Time `json:"created_at"` // 创建时间
+	Content   string    `json:"content"`    // 内容
+	Anonymous bool      `json:"anonymous"`  // 是否匿名
 }
 
 //  实现Scanner和Valuer接口
