@@ -121,3 +121,4 @@ docker run --name wpr-server -p 8080:8080 -d wpr-server:latest
 
 [后端接口文档](./api.md)
 
+[后端更新日志](./change_log.md)
