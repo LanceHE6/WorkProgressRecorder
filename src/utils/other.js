@@ -1,6 +1,6 @@
 export const mapping = (item, data) => {
     if(item.isDate){
-        return new Date(data).toLocaleString()
+        return toLocaleString(data)
     }
     else if(item.isMapping){
         for(const i of item.mappingList){
@@ -47,4 +47,18 @@ export function screenDeviceViewport(){
     if (viewportMeta) {
         viewportMeta.parentNode.removeChild(viewportMeta);
     }
+}
+
+export function toLocaleString(date){
+    if(!date){
+        return null
+    }
+    return new Date(date).toLocaleString()
+}
+
+export function getReverseList(list){
+    if(!list){
+        return null
+    }
+    return [...list].reverse()
 }
