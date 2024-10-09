@@ -23,7 +23,7 @@ func (p PostServiceImpl) AddPost(context *gin.Context) {
 	type addPostReq struct {
 		Title     string `json:"title" form:"title" binding:"required"`
 		Content   string `json:"content" form:"content" binding:"required"`
-		Anonymous bool   `json:"anonymous" form:"anonymous" binding:"required"`
+		Anonymous bool   `json:"anonymous" form:"anonymous"`
 	}
 	var data addPostReq
 	if err := context.ShouldBind(&data); err != nil {
@@ -60,7 +60,7 @@ func (p PostServiceImpl) AddComment(context *gin.Context) {
 	type addCommentReq struct {
 		ID        int64  `json:"id" form:"id" binding:"required"`
 		Content   string `json:"content" form:"content" binding:"required"`
-		Anonymous bool   `json:"anonymous" form:"anonymous" binding:"required"`
+		Anonymous bool   `json:"anonymous" form:"anonymous"`
 	}
 	var data addCommentReq
 	if err := context.ShouldBind(&data); err != nil {
