@@ -1,7 +1,7 @@
 //获取用户对象
 import {ref} from "vue";
 
-export const FRONTEND_VERSION = 'V1.1.0.240925_R'
+export const FRONTEND_VERSION = 'V1.2.0.241009_R'
 export const BACKEND_VERSION = ref('')
 export const CURRENT_USER = ref(getUser())
 
