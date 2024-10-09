@@ -15,7 +15,7 @@ type Post struct {
 	User *User `gorm:"foreignKey:UID" json:"user"`
 	UID  int64 `json:"uid"`
 
-	Title     string      `gorm:"type:varchar(255);not null" json:"title"`
+	Title     string      `gorm:"type:text;not null" json:"title"`
 	Content   string      `gorm:"type:text;not null" json:"content"`
 	Anonymous bool        `gorm:"type:tinyint(1);not null" json:"anonymous"`
 	Comments  CommentList `gorm:"type:json" json:"comments"`

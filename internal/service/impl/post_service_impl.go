@@ -149,7 +149,7 @@ func (p PostServiceImpl) DeletePost(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, pkg.ErrorResponse(-2, "无法获取用户id", err))
 	}
 	if post.UID != userInfo.ID {
-		context.JSON(http.StatusOK, pkg.ErrorResponse(1, "无权限删除", err))
+		context.JSON(http.StatusOK, pkg.FailedResponse(1, "无权限删除"))
 		return
 	}
 	if err = postRepo.DeleteByID(data.ID); err != nil {
