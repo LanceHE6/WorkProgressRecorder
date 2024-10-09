@@ -22,10 +22,6 @@ generator: "@tarslib/widdershins v4.0.23"
 
 # WorkProgressRecorder
 
-Base URLs:
-
-* <a href="http://127.0.0.1:8070">开发环境: http://127.0.0.1:8070</a>
-
 # Authentication
 
 - HTTP Authentication, scheme: bearer
@@ -199,6 +195,8 @@ POST /api/v1/user/import
 ## PUT 更改密码
 
 PUT /api/v1/user/update/psw
+
+未含有id参数时,为用户修改自己的密码;含有id参数时为管理员修改用户密码.
 
 > Body 请求参数
 
@@ -649,6 +647,52 @@ DELETE /api/v1/user/dire/del
 | » msg  | string  | true | none |        | none |
 | » data | null    | true | none |        | none |
 
+## GET 导出用户数据
+
+GET /api/v1/user/export
+
+> 返回示例
+
+> 200 Response
+
+```json
+{
+  "code": 1,
+  "msg": "导出文件失败",
+  "data": {
+    "err": ""
+  }
+}
+```
+
+```json
+{
+  "code": 2,
+  "msg": "导出文件失败",
+  "data": {
+    "err": ""
+  }
+}
+```
+
+### 返回结果
+
+| 状态码 | 状态码含义                                                   | 说明 | 数据模型 |
+| ------ | ------------------------------------------------------------ | ---- | -------- |
+| 200    | [OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)      | none | Inline   |
+| 500    | [Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1) | none | Inline   |
+
+### 返回数据结构
+
+状态码 **500**
+
+| 名称   | 类型    | 必选 | 约束 | 中文名 | 说明 |
+| ------ | ------- | ---- | ---- | ------ | ---- |
+| » code | integer | true | none |        | none |
+| » msg  | string  | true | none |        | none |
+| » data | object  | true | none |        | none |
+| »» err | string  | true | none |        | none |
+
 # 目标/就业目标
 
 ## POST 添加或更新就业目标
@@ -716,7 +760,7 @@ POST /api/v1/emgl/add
 
 # 目标/考研目标
 
-## POST 添加或更新考研目标 
+## POST 添加或更新考研目标
 
 POST /api/v1/pggl/add
 
@@ -1232,18 +1276,20 @@ POST /api/v1/post/add
 
 ```json
 {
-  "title": "non officia elit ut dolor",
-  "content": "ipsum proident ad"
+  "title": "酸型值设局",
+  "content": "fugiat officia dolore mollit",
+  "anonymous": false
 }
 ```
 
 ### 请求参数
 
-| 名称      | 位置 | 类型   | 必选 | 中文名 | 说明 |
-| --------- | ---- | ------ | ---- | ------ | ---- |
-| body      | body | object | 否   |        | none |
-| » title   | body | string | 是   |        | none |
-| » content | body | string | 是   |        | none |
+| 名称        | 位置 | 类型    | 必选 | 中文名   | 说明 |
+| ----------- | ---- | ------- | ---- | -------- | ---- |
+| body        | body | object  | 否   |          | none |
+| » title     | body | string  | 是   | 标题     | none |
+| » content   | body | string  | 是   | 内容     | none |
+| » anonymous | body | boolean | 是   | 是否匿名 | none |
 
 > 返回示例
 
@@ -1287,18 +1333,20 @@ POST /api/v1/post/comment/add
 
 ```json
 {
-  "id": 2416718815170560,
-  "content": "Ut esse in aliquip"
+  "id": 4322627430649856,
+  "content": "test",
+  "anonymous": true
 }
 ```
 
 ### 请求参数
 
-| 名称      | 位置 | 类型    | 必选 | 中文名 | 说明 |
-| --------- | ---- | ------- | ---- | ------ | ---- |
-| body      | body | object  | 否   |        | none |
-| » id      | body | integer | 是   |        | none |
-| » content | body | string  | 是   |        | none |
+| 名称        | 位置 | 类型    | 必选 | 中文名 | 说明     |
+| ----------- | ---- | ------- | ---- | ------ | -------- |
+| body        | body | object  | 否   |        | none     |
+| » id        | body | integer | 是   |        | 帖子id   |
+| » content   | body | string  | 是   |        | 评论内容 |
+| » anonymous | body | boolean | 是   |        | 是否匿名 |
 
 > 返回示例
 
