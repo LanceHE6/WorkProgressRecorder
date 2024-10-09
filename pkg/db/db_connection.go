@@ -25,7 +25,7 @@ func init() {
 	dbname := config.GetDBMySQLDBName()
 
 	// 创建MySQL连接字符串
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/?charset=utf8&parseTime=True&loc=Local",
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/?charset=utf8mb4&parseTime=True&loc=Local",
 		account,
 		password,
 		host,
@@ -57,7 +57,7 @@ func init() {
 
 	// 创建MySQL连接字符串
 
-	dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
+	dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		account,
 		password,
 		host,
