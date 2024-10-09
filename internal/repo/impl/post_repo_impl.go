@@ -36,7 +36,8 @@ func (p PostRepoImpl) AddComment(pid int64, comment model.Comment) error {
 	if err != nil {
 		return err
 	}
-	post.Comments = append(post.Comments, comment)
+	// 添加评论,新评论在最前面
+	post.Comments = append([]model.Comment{comment}, post.Comments...)
 	return p.modelDB().Update(post).Error
 }
 
@@ -81,6 +82,8 @@ func (p PostRepoImpl) Search(params pkg.SearchPostsParams) ([]model.Post, int, e
 	if params.Page != nil {
 		query = query.Offset((*params.Page - 1) * *params.Limit)
 	}
+	// 按照时间排序
+	query = query.Order("created_at DESC")
 	// 执行查询
 	err := query.Find(&posts).Error
 	if err != nil {
