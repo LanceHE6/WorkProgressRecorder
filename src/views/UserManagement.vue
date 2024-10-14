@@ -241,6 +241,20 @@
       </div>
     </n-card>
   </n-modal>
+  <n-modal :show="isExporting">
+    <n-card
+        style="width: auto; justify-content: center"
+        :bordered="false"
+        role="dialog"
+        aria-modal="true"
+    >
+      <n-spin>
+        <template #description>
+          表格导出中，请稍后...
+        </template>
+      </n-spin>
+    </n-card>
+  </n-modal>
 </template>
 
 <script setup>
@@ -254,6 +268,8 @@ import * as XLSX from "xlsx"
 import {mapping} from "../utils/other.js";
 
 const message = useMessage()
+
+const isExporting = ref(false)
 
 const myUpload = ref(null)
 const pageSize = 30
@@ -643,35 +659,69 @@ async function uploadUserList(userList){
 }
 
 async function downloadUserList(){
-  let userList
-  let goalList
+  isExporting.value = true
   const result = await axiosGet({
-    url: '/user/search',
-    params: {...userState.params , ...{page_size: 10086 * 10086}},
-    name: 'get-all-user-list'
+    url: '/user/export',
+    config: {
+      responseType: 'blob'
+    },
+    name: 'export-userList'
   })
-  if(result && result.data){
-    //提取user
-    userList = result.data.rows.map(item => item.user);
-    //提取goal
-    goalList = result.data.rows.map(item => {
-      return {...item.goal.empl_goal, ...item.goal.pg_goal}
-    });
-  }
-  else{
+
+  if(!result){
     message.error("网络请求出错了")
+    isExporting.value = false
     return
   }
 
+  let blob = new Blob([result], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
 
-  const myList = getListTem(userListDownloadTem, userList, goalList)
+  let file = new File([blob], '导出表格.xlsx', {
+    lastModified: new Date(),
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  })
 
-  const workbook = XLSX.utils.book_new();
-  const worksheet = XLSX.utils.json_to_sheet(myList.listResult)
-  XLSX.utils.book_append_sheet(workbook, worksheet, "sheet1")
-  XLSX.utils.sheet_add_aoa(worksheet, [myList.listHeader], { origin: "A1" });
-  worksheet["!cols"] = new Array(myList.listHeader.length).fill({ wch: 15 });
-  XLSX.writeFileXLSX(workbook, "导出表格.xlsx")
+  const a = document.createElement('a')
+  a.style.display = 'none'
+  document.body.appendChild(a)
+  const url = URL.createObjectURL(file)
+  a.href = url
+  a.download = file.name
+  a.click()
+  // 清理
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+
+  isExporting.value = false
+  // let userList
+  // let goalList
+  // const result = await axiosGet({
+  //   url: '/user/search',
+  //   params: {...userState.params , ...{page_size: 10086 * 10086}},
+  //   name: 'get-all-user-list'
+  // })
+  // if(result && result.data){
+  //   //提取user
+  //   userList = result.data.rows.map(item => item.user);
+  //   //提取goal
+  //   goalList = result.data.rows.map(item => {
+  //     return {...item.goal.empl_goal, ...item.goal.pg_goal}
+  //   });
+  // }
+  // else{
+  //   message.error("网络请求出错了")
+  //   return
+  // }
+  //
+  //
+  // const myList = getListTem(userListDownloadTem, userList, goalList)
+  //
+  // const workbook = XLSX.utils.book_new();
+  // const worksheet = XLSX.utils.json_to_sheet(myList.listResult)
+  // XLSX.utils.book_append_sheet(workbook, worksheet, "sheet1")
+  // XLSX.utils.sheet_add_aoa(worksheet, [myList.listHeader], { origin: "A1" });
+  // worksheet["!cols"] = new Array(myList.listHeader.length).fill({ wch: 15 });
+  // XLSX.writeFileXLSX(workbook, "导出表格.xlsx")
 }
 
 function getListTem(tem, list1, list2){
