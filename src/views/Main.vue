@@ -122,6 +122,20 @@
         </n-row>
       </n-form>
   </n-modal>
+  <n-modal :show="isLoading">
+    <n-card
+        style="width: auto; justify-content: center"
+        :bordered="false"
+        role="dialog"
+        aria-modal="true"
+    >
+      <n-spin>
+        <template #description>
+          加载中，请稍后（第一次加载时间可能较长）
+        </template>
+      </n-spin>
+    </n-card>
+  </n-modal>
 </template>
 
 <script setup>
@@ -132,7 +146,8 @@ import { useMessage } from 'naive-ui'
 import {axiosGet, axiosPost} from "../utils/axiosUtil.js";
 import {BACKEND_VERSION, CURRENT_USER, FRONTEND_VERSION, getUser, setUser} from "../utils/appManager.js";
 
-const message = useMessage();
+const message = useMessage()
+const isLoading = ref(true)
 const formRef = ref(null)
 
 const state = reactive({
@@ -169,6 +184,7 @@ onMounted( async () =>{
     }
   }
   await getBackendVersion()
+  isLoading.value = false
 })
 
 function getCurrentDateFormatted() {
