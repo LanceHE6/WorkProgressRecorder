@@ -14,19 +14,23 @@ const getToken = () => {
  * @param url 请求url
  * @param params 请求参数
  * @param headers 请求头
+ * @param config 其他配置
  * @param name 调用者
  * @description 发送get请求的函数
  * @return resultObj 请求结果
  * */
-export const axiosGet = async ({url, params = {}, headers = {}, name = 'axios_get'}) => {
+export const axiosGet = async ({url, params = {}, headers = {}, config = {}, name = 'axios_get'}) => {
     getToken()
     let resultObj = false
     const defaultHeaders = {
         'Authorization': token
     }
     await axios.get(`/api/v1${url}`, {
-        headers: {...defaultHeaders, ...headers},
-        params: params
+        ...{
+            headers: {...defaultHeaders, ...headers},
+            params: params
+        },
+        ...config
     })
     .then(result => {
         console.log(`${name}:`, result)
