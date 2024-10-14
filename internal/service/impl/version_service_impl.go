@@ -14,7 +14,7 @@ type VersionServiceImpl struct {
 //	@receiver v VersionServiceImpl
 //	@param context *gin.Context
 func (v VersionServiceImpl) GetVersion(context *gin.Context) {
-	const version = "V1.4.3.241009_R"
+	const version = "V1.5.3.241014_R"
 	context.JSON(200, pkg.NewResponse(0, "Hello WPR!", map[string]any{
 		"version": version,
 	}))

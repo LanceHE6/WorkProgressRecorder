@@ -10,6 +10,7 @@ import (
 	"github.com/xuri/excelize/v2"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -418,10 +419,12 @@ func (s UserServiceImpl) ExportUserInfo2Excel(context *gin.Context) {
 	userRepo := repo.NewUserRepository()
 	pgGoalRepo := repo.NewPGGoalRepo()
 	emplGoalRepo := repo.NewEmplGoalRepo()
+	workLogRepo := repo.NewWorkLogRepo()
+
 	users := userRepo.SelectAll()
 
-	// 表数据
-	data := make([][]string, 0)
+	// 表1数据,展示用户的信息
+	data1 := make([][]string, 0)
 
 	for _, user := range users {
 		// 构造用户数据
@@ -484,24 +487,68 @@ func (s UserServiceImpl) ExportUserInfo2Excel(context *gin.Context) {
 			userInfo[11] = ""
 			userInfo[12] = ""
 		}
-		data = append(data, userInfo)
+		data1 = append(data1, userInfo)
 	}
 	// 创建新的excel文件
 	excel := excelize.NewFile()
 	// 设置列宽
 	_ = excel.SetColWidth("Sheet1", "A", "M", 20)
 	// 设置表头
-	titleList := []string{"学号", "班级", "姓名", "专业", "方向", "目标院校", "目标专业", "目标分数", "找工作状态", "目标公司", "目标职位", "理想薪资(k)", "目标地区"}
-	_ = excel.SetSheetRow("Sheet1", "A1", &titleList)
+	titleList1 := []string{"学号", "班级", "姓名", "专业", "方向", "目标院校", "目标专业", "目标分数", "找工作状态", "目标公司", "目标职位", "理想薪资(k)", "目标地区"}
+	_ = excel.SetSheetRow("Sheet1", "A1", &titleList1)
 	// 循环遍历写入数据
-	for i, row := range data {
+	for i, row := range data1 {
 		rowNum := fmt.Sprintf("A%d", i+2)
 		_ = excel.SetSheetRow("Sheet1", rowNum, &row)
 	}
+	// 表2数据,用户展示找工作日志
+	data2 := make([][]string, 0)
+	workLogs, err := workLogRepo.SelectAll()
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, pkg.ErrorResponse(-1, "查询工作日志失败", err))
+		return
+	}
+	for _, workLog := range workLogs {
+		// 构造用户数据
+		LogInfo := make([]string, 9)
+		statusTimeLine := workLog.StatusTimeLine
+		if len(statusTimeLine) != 0 {
+			latestTimeLine := statusTimeLine[0]
+			LogInfo[6] = latestTimeLine.Status                                                     // 最新状态
+			LogInfo[7] = time.Unix(latestTimeLine.CreatedAt/1000, 0).Format("2006-01-02 15:04:05") // 最新时间
+			// 构建进度详情的字符串结果
+			var result strings.Builder
+			for _, jobStatus := range statusTimeLine {
+				_, _ = fmt.Fprintf(&result, "%s\n%s\n", jobStatus.Status, time.Unix(jobStatus.CreatedAt/1000, 0).Format("2006-01-02 15:04:05"))
+			}
+			LogInfo[8] = result.String()
+		}
+
+		LogInfo[0] = workLog.User.Name
+		LogInfo[1] = workLog.User.Account
+		LogInfo[2] = workLog.CompanyName
+		LogInfo[3] = workLog.Job
+		LogInfo[4] = workLog.Salary
+		LogInfo[5] = workLog.Location
+
+		data2 = append(data2, LogInfo)
+	}
+	_, _ = excel.NewSheet("sheet2")
+	// 设置列宽
+	_ = excel.SetColWidth("sheet2", "A", "I", 20)
+	// 设置表头
+	titleList2 := []string{"姓名", "学号", "公司名称", "工作岗位", "薪资(k)", "工作地区", "最新状态", "最新时间", "进度详情"}
+	_ = excel.SetSheetRow("sheet2", "A1", &titleList2)
+	// 循环遍历写入数据
+	for i, row := range data2 {
+		rowNum := fmt.Sprintf("A%d", i+2)
+		_ = excel.SetSheetRow("sheet2", rowNum, &row)
+	}
+
 	// 命名
 	fileName := "eui" + strconv.FormatInt(time.Now().Unix(), 10) + ".xlsx"
 	path := pkg.GetFullExportPath(fileName)
-	err := excel.SaveAs(path)
+	err = excel.SaveAs(path)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, pkg.ErrorResponse(1, "导出文件失败", err))
 		return

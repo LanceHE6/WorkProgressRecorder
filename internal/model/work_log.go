@@ -12,7 +12,7 @@ import (
 type WorkLog struct {
 	Base
 	// 关联用户
-	User           *User          `gorm:"foreignKey:UID" json:"-"`
+	User           *User          `gorm:"foreignKey:UID" json:"user"`
 	UID            int64          `json:"uid"`
 	CompanyName    string         `json:"company_name" gorm:"column:company_name;type:varchar(255);not null;"` // 公司名称
 	Job            string         `json:"job" gorm:"column:job;type:varchar(255);not null;"`                   // 职位

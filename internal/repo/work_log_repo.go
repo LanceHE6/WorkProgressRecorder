@@ -13,6 +13,7 @@ type WorkLogRepo interface {
 	SelectByID(id int64) (model.WorkLog, error)
 	AddStatusTimeLine(id int64, timeLine model.StatusTime) error
 	SelectByUID(uid int64) ([]model.WorkLog, error)
+	SelectAll() ([]model.WorkLog, error)
 }
 
 // NewWorkLogRepo

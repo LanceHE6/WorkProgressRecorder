@@ -65,3 +65,15 @@ func (w WorkLogRepoImpl) SelectByUID(uid int64) ([]model.WorkLog, error) {
 	err := w.modelDB().Where("uid=?", uid).Find(&workLogs).Error
 	return workLogs, err
 }
+
+// SelectAll
+//
+//	@Description: 查询所有工作日志
+//	@receiver w WorkLogRepoImpl
+//	@return []model.WorkLog 工作日志列表
+//	@return error 错误信息
+func (w WorkLogRepoImpl) SelectAll() ([]model.WorkLog, error) {
+	var workLogs []model.WorkLog
+	err := w.modelDB().Preload("User").Find(&workLogs).Error
+	return workLogs, err
+}
