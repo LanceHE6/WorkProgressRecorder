@@ -243,7 +243,7 @@ import {onMounted, ref} from "vue";
 import {axiosDelete, axiosGet, axiosPost} from "../utils/axiosUtil.js";
 import {useMessage} from "naive-ui";
 import {toLocaleString} from "../utils/other.js";
-import {CURRENT_USER} from "../utils/appManager.js";
+import {CURRENT_USER, getUser} from "../utils/appManager.js";
 
 const message = useMessage()
 const pageSize = 10
@@ -332,6 +332,7 @@ async function initPostList(){
 
 async function getMyPostList(page = 1){
   myPostListParams.value.page = page
+  myPostListParams.value.uid = getUser().id
   const result = await axiosGet({
     url: '/post/search',
     params: myPostListParams.value,
