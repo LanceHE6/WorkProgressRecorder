@@ -76,7 +76,7 @@ npm run dev
 git clone -b backend-dev https://github.com/LanceHE6/WorkProgressRecorder.git
 
 # 进入项目目录
-cd go-server
+cd WorkProgressRecorder-backend-dev
 
 # 下载依赖
 go mod download
@@ -112,7 +112,7 @@ docker run --name wpr-web -p 5173:5173 -d wpr-web:latest
 git clone -b backend-dev https://github.com/LanceHE6/WorkProgressRecorder.git
 
 # 进入项目目录
-cd go-server
+cd WorkProgressRecorder-backend-dev
 
 # 构建镜像
 docker build -t wpr-server:latest .
