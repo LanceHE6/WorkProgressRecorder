@@ -58,7 +58,7 @@ func (p PostServiceImpl) AddPost(context *gin.Context) {
 //	@param context *gin.Context
 func (p PostServiceImpl) AddComment(context *gin.Context) {
 	type addCommentReq struct {
-		ID        int64  `json:"id" form:"id" binding:"required"`
+		ID        int64  `json:"id,string" form:"id" binding:"required"`
 		Content   string `json:"content" form:"content" binding:"required"`
 		Anonymous bool   `json:"anonymous" form:"anonymous"`
 	}
@@ -108,7 +108,7 @@ func (p PostServiceImpl) SearchPosts(context *gin.Context) {
 	if context.Query("uid") != "" {
 		uid, _ := strconv.Atoi(context.Query("uid"))
 		uid64 := int64(uid)
-		params.UID = &uid64
+		params.UID = uid64
 	}
 	postRepo := repo.NewPostRepo()
 	postsList, count, err := postRepo.Search(params)
@@ -131,7 +131,7 @@ func (p PostServiceImpl) SearchPosts(context *gin.Context) {
 //	@param context *gin.Context
 func (p PostServiceImpl) DeletePost(context *gin.Context) {
 	type deletePostReq struct {
-		ID int64 `json:"id" form:"id" binding:"required"`
+		ID int64 `json:"id,string" form:"id" binding:"required"`
 	}
 	var data deletePostReq
 	if err := context.ShouldBind(&data); err != nil {

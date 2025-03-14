@@ -5,6 +5,7 @@ import (
 	"WorkProgressRecord/internal/model"
 	"WorkProgressRecord/internal/repo"
 	"WorkProgressRecord/pkg"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -58,7 +59,7 @@ func (w WorkLogServiceImpl) AddWorkLog(context *gin.Context) {
 //	@param context *gin.Context
 func (w WorkLogServiceImpl) AddStatusTimeLine(context *gin.Context) {
 	type AddStatusTimeLineReq struct {
-		ID         int64  `json:"id" form:"id" binding:"required"`
+		ID         int64  `json:"id,string" form:"id" binding:"required"`
 		CreateTime int64  `json:"create_time" form:"create_time" binding:"required"`
 		Status     string `json:"status" form:"status" binding:"required"`
 		Stage      int    `json:"stage" form:"stage" binding:"required"`
@@ -76,6 +77,7 @@ func (w WorkLogServiceImpl) AddStatusTimeLine(context *gin.Context) {
 	}
 	workLogRepo := repo.NewWorkLogRepo()
 	err := workLogRepo.AddStatusTimeLine(data.ID, statusTime)
+	fmt.Println(err)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, pkg.ErrorResponse(1, "添加状态时间线失败", err))
 		return

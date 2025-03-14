@@ -66,8 +66,8 @@ func (p PostRepoImpl) Search(params pkg.SearchPostsParams) ([]model.Post, int, e
 	var posts []model.Post
 	query := p.modelDB().Preload("User")
 	// 构建查询
-	if params.UID != nil {
-		query = query.Where("uid = ? AND anonymous IS FALSE", *params.UID)
+	if params.UID != 0 {
+		query = query.Where("uid = ? AND anonymous IS FALSE", params.UID)
 	}
 	// 计算总数
 	var count int

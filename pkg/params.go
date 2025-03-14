@@ -41,5 +41,5 @@ type SearchPostsParams struct {
 	Page  *int // 页码
 	Limit *int // 每页条数
 
-	UID *int64 // 用户ID
+	UID int64 `json:"uid,string"` // 用户ID
 }

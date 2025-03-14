@@ -138,7 +138,7 @@ func (s UserServiceImpl) UpdatePassword(context *gin.Context) {
 	// updatePasswordRequest
 	// @Description: 修改密码请求参数结构体
 	type updatePasswordRequest struct {
-		ID          int64  `json:"id" form:"id"`
+		ID          int64  `json:"id,string" form:"id"`
 		OldPassword string `json:"old_password" form:"old_password"`
 		NewPassword string `json:"new_password" form:"new_password" binding:"required"`
 	}

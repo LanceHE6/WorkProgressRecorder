@@ -4,7 +4,7 @@ type EmploymentGoal struct {
 	Base
 	// 关联用户
 	User *User `gorm:"foreignKey:UID" json:"-"`
-	UID  int64 `gorm:"unique" json:"uid"`
+	UID  int64 `gorm:"unique" json:"uid,string"`
 
 	// 目标
 	Status        int    `json:"status"`         // 就业状态1:未拿到offer 2:已拿到offer

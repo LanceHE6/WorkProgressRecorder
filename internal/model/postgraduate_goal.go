@@ -4,7 +4,7 @@ type PostgraduateGoal struct {
 	Base
 	// 关联用户
 	User User  `gorm:"foreignKey:UID" json:"-"`
-	UID  int64 `gorm:"unique" json:"uid"`
+	UID  int64 `gorm:"unique" json:"uid,string"`
 
 	TargetUniversity string  `json:"target_university"` // 目标院校
 	TargetMajor      string  `json:"target_major"`      // 目标专业

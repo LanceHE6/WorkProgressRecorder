@@ -13,7 +13,7 @@ type Post struct {
 	Base
 	// 关联用户
 	User *User `gorm:"foreignKey:UID" json:"user"`
-	UID  int64 `json:"uid"`
+	UID  int64 `json:"uid,string"`
 
 	Title     string      `gorm:"type:text;not null" json:"title"`
 	Content   string      `gorm:"type:text;not null" json:"content"`
