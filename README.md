@@ -54,11 +54,11 @@
 ##### 前端
 
 ```bash
-# 克隆项目
-git clone https://github.com/LanceHE6/WorkProgressRecorder.git
+# 克隆前端分支
+git clone -b frontend-dev https://github.com/LanceHE6/WorkProgressRecorder.git
 
 # 进入项目目录
-cd vue-web
+cd WorkProgressRecorder-frontend-dev
 
 # 安装依赖
 npm install
@@ -72,8 +72,11 @@ npm run dev
 ##### 后端
 
 ```bash
+# 克隆后端分支
+git clone -b backend-dev https://github.com/LanceHE6/WorkProgressRecorder.git
+
 # 进入项目目录
-cd go-server
+cd WorkProgressRecorder-backend-dev
 
 # 下载依赖
 go mod download
@@ -89,11 +92,11 @@ go build -o main .
 ##### 前端
 
 ```bash
-# 克隆项目
-git clone https://github.com/LanceHE6/WorkProgressRecorder.git
+# 克隆前端分支
+git clone -b frontend-dev https://github.com/LanceHE6/WorkProgressRecorder.git
 
 # 进入项目目录
-cd vue-web
+cd WorkProgressRecorder-frontend-dev
 
 # 构建镜像
 docker build -t wpr-web:latest .
@@ -105,8 +108,11 @@ docker run --name wpr-web -p 5173:5173 -d wpr-web:latest
 ##### 后端
 
 ```bash
+# 克隆后端分支
+git clone -b backend-dev https://github.com/LanceHE6/WorkProgressRecorder.git
+
 # 进入项目目录
-cd go-server
+cd WorkProgressRecorder-backend-dev
 
 # 构建镜像
 docker build -t wpr-server:latest .
